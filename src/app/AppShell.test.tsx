@@ -10,7 +10,7 @@ function renderShell(initial = '/today') {
   const router = createMemoryRouter(
     [
       {
-        element: <AppShell />,
+        element: <AppShell capture={false} />,
         children: [
           { path: 'today', element: <h1>Today screen</h1> },
           { path: 'inbox', element: <h1>Inbox screen</h1> },

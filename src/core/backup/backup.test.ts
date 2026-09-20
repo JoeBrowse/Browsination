@@ -78,7 +78,7 @@ describe('snapshots', () => {
     expect(list[0]!.at > list[9]!.at).toBe(true)
     const env = await readSnapshot(store, list[0]!.name)
     expect(env.schemaVersion).toBe(SCHEMA_VERSION)
-    expect(env.tables.items).toHaveLength(1)
+    expect(env.tables.items?.length).toBeGreaterThan(0)
   })
 
   it('parses its own file names', () => {

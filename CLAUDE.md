@@ -25,7 +25,12 @@ src/core/backup/        export/import envelope, snapshots, FileStore interface
 src/core/platform/      the only files allowed to import @capacitor/* (lint-enforced): db, fileStore, exportTransport, notifications, appEvents
 src/core/modules/       ModuleDef contract + registry (the single core -> modules import)
 src/core/today/         collectToday: merges module cards, sorts, caps
+src/core/tasks/         task queries over items (overdue, due, focus, chase, wins) and recurring completion
+src/core/recurrence/    RRULE subset: parse, format, describe, nextOccurrence
+src/core/notifications/ pure planner + reconcile, sync service; the port lives in platform/notifications.ts
 src/core/time/          localDay: day-start-hour rule, civil day arithmetic
+src/app/tasks/          TaskRow, ItemSheet (create/edit/triage), FocusPicker, WinsList, fields, useComplete
+src/app/capture/        QuickCapture (registers the FAB handler)
 src/core/settings/      typed settings schema + defaults
 src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
 src/modules/<id>/       one folder per module; registered in src/modules/index.ts

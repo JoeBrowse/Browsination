@@ -6,6 +6,7 @@ import { itemsRepo, type ItemsRepo } from '@/core/repos/items'
 import { logEntriesRepo, type LogEntriesRepo } from '@/core/repos/logEntries'
 import { peopleRepo, type PeopleRepo } from '@/core/repos/people'
 import { settingsRepo, type SettingsRepo } from '@/core/repos/settings'
+import { taskQueries, type TaskQueries } from '@/core/tasks/queries'
 
 /** Everything a screen needs. Built once at boot, provided through context. */
 export interface Services {
@@ -14,6 +15,7 @@ export interface Services {
   appVersion: string
   schemaVersion: number
   items: ItemsRepo
+  tasks: TaskQueries
   logs: LogEntriesRepo
   people: PeopleRepo
   fileRows: FilesRepo
@@ -27,6 +29,7 @@ export function buildServices(db: SqlDriver, files: FileStore, appVersion: strin
     appVersion,
     schemaVersion,
     items: itemsRepo(db),
+    tasks: taskQueries(db),
     logs: logEntriesRepo(db),
     people: peopleRepo(db),
     fileRows: filesRepo(db),
