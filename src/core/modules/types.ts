@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { ComponentType } from 'react'
 import type { RouteObject } from 'react-router'
 import type { SqlDriver } from '../db/driver'
 import type { LocalDay } from '../time/localDay'
@@ -45,4 +46,6 @@ export interface ModuleDef {
   /** Mounted under /m/<id>. */
   routes: RouteObject[]
   today?: TodayContributor[]
+  /** Interactive Today panels owned by the module (check-in cards, quick logs). Rendered inside the module's accent scope. */
+  panels?: { key: string; component: ComponentType }[]
 }

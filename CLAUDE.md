@@ -31,6 +31,8 @@ src/core/notifications/ pure planner + reconcile, sync service; the port lives i
 src/core/time/          localDay: day-start-hour rule, civil day arithmetic
 src/app/tasks/          TaskRow, ItemSheet (create/edit/triage), FocusPicker, WinsList, fields, useComplete
 src/app/capture/        QuickCapture (registers the FAB handler)
+src/core/consistency/   "x of last N days" and heat map maths (never streaks)
+src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
 src/core/settings/      typed settings schema + defaults
 src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
 src/modules/<id>/       one folder per module; registered in src/modules/index.ts
@@ -48,7 +50,8 @@ src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
 - **Migrations** (`src/core/db/migrations/NNNN_name.ts`): plain SQL, append-only, contiguous versions, one transaction each, checksum-verified. Declare `tables` (parent first) and `fixtures` (one full row per table). Adding a table = migration + repository + fixtures; export/import and the round-trip test pick it up automatically. Portable SQL only: no STRICT tables, no generated columns, no RETURNING, no DROP COLUMN (rebuild instead). `PRAGMA foreign_keys` cannot be changed inside a transaction.
 - **Export/import** is our own JSON envelope (`src/core/backup/format.ts`), never the plugin's. Import is replace-all: drop, migrate to the file's version, insert, migrate to head, foreign-key check; on failure the in-memory copy is restored. A golden export per schema version lives in `src/test/golden/` and must import forever.
 - **Snapshots** are the same envelope written to app storage before every migration and import (keep 10).
-- **Today cards are data** (`TodayCard`), not JSX. Core renders them and enforces the cap.
+- **Today cards are data** (`TodayCard`), not JSX. Core renders them and enforces the cap. A module that needs an interactive card (check-in, quick log) registers a `panel` component instead; panels render above the task sections inside the module's accent.
+- **Log types** are owned by the module that writes them (documented in that module's `repo.ts`): fixed `unit` per type, payload shape typed at the repository boundary. One-per-day types upsert via `upsertDaily`.
 - **Module accent** is one CSS variable (`--accent`) set by `ModuleScope`; components inherit it.
 - **Forgiving consistency, never streaks.** Show "x of last 7 days". No red badges, no guilt copy.
 - **No prose in the UI.** Labels are one or two words.

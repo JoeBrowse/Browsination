@@ -1,9 +1,10 @@
 import { m0001 } from './0001_core'
 import { m0002 } from './0002_tasks'
+import { m0003 } from './0003_brain'
 import type { Migration } from './types'
 
 /** Ordered, contiguous, append-only. Each stage appends its migrations here. */
-export const MIGRATIONS: Migration[] = [m0001, m0002]
+export const MIGRATIONS: Migration[] = [m0001, m0002, m0003]
 
 export const SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]?.version ?? 0
 

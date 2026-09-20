@@ -1,0 +1,18 @@
+import { Brain } from 'lucide-react'
+import type { ModuleDef } from '@/core/modules/types'
+import { CheckInPanel } from './CheckInPanel'
+import { BrainScreen } from './screens/BrainScreen'
+import { HabitScreen } from './screens/HabitScreen'
+
+export const brainModule: ModuleDef = {
+  id: 'brain',
+  name: 'Brain',
+  icon: Brain,
+  accent: '#b48cff',
+  order: 10,
+  routes: [
+    { index: true, element: <BrainScreen /> },
+    { path: 'habit/:id', element: <HabitScreen /> },
+  ],
+  panels: [{ key: 'brain.checkin', component: CheckInPanel }],
+}
