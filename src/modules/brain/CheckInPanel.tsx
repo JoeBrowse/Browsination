@@ -47,6 +47,23 @@ export function CheckInPanel() {
         </div>
       </Row>
       {noteOpen ? <input aria-label="Mood note text" defaultValue={String(d.mood?.payload.note ?? '')} placeholder="Note" onBlur={(e) => saveNote(e.target.value)} /> : null}
+      {d.drankYesterday ? (
+        <Row label="Morning after">
+          <div className="chips">
+            {[1, 2, 3, 4, 5].map((v) => (
+              <button
+                key={v}
+                className={`chip${d.morningAfter?.value === v ? ' on' : ''}`}
+                aria-label={`Morning after ${v}`}
+                aria-pressed={d.morningAfter?.value === v}
+                onClick={() => void repo.upsertDaily('morning_after', d.today, d.dayStartHour, { value: v, unit: 'score', payload: { units_previous_day: d.unitsYesterday } })}
+              >
+                {v}
+              </button>
+            ))}
+          </div>
+        </Row>
+      ) : null}
       <Row label="Sleep">
         <Button onClick={() => setSleepOpen(true)}>{d.sleep ? sleepSummary(d) : 'Log'}</Button>
       </Row>

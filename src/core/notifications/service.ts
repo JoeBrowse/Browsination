@@ -41,15 +41,16 @@ export async function syncNotifications(deps: NotificationDeps): Promise<SyncRes
   const counts = await tasks.counts(calendarToday)
   const ctx = { db: deps.db, today: todayLocal(now, settings.dayStartHour), calendarToday, now }
   const extraLines: string[] = []
+  const extraTimed: NonNullable<Parameters<typeof planNotifications>[0]['extraTimed']> = []
   for (const m of deps.modules ?? []) {
-    if (!m.digest) continue
     try {
-      extraLines.push(...(await m.digest(ctx)))
+      if (m.digest) extraLines.push(...(await m.digest(ctx)))
+      if (m.reminders) extraTimed.push(...(await m.reminders(ctx)))
     } catch {
       /* a broken module never blocks the digest */
     }
   }
-  const desired = planNotifications({ now, settings, items, counts, extraLines })
+  const desired = planNotifications({ now, settings, items, counts, extraLines, extraTimed })
   const plan = reconcile(desired, pending)
   if (plan.cancel.length) await deps.port.cancel(plan.cancel)
   if (plan.schedule.length) await deps.port.schedule(plan.schedule)

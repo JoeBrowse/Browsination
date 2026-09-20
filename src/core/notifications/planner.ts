@@ -26,6 +26,8 @@ export interface PlannerInput {
   counts: DigestCounts
   /** Module lines appended to the morning digest. */
   extraLines?: string[]
+  /** Module reminders (medication and the like), same rules as timed item reminders. */
+  extraTimed?: { key: string; at: string; title: string; body?: string; route: string }[]
   /** How far ahead individual reminders are scheduled. */
   windowDays?: number
 }
@@ -72,6 +74,13 @@ export function planNotifications(input: PlannerInput): PlannedNotification[] {
       if (delta <= 0 || delta > windowMs) continue
       const key = `item:${it.id}`
       out.push({ id: notificationId(key), key, at: at.toISOString(), title: it.title, body: it.due_date ? `Due ${it.due_date}` : '', channel: 'timed', route: '/inbox' })
+    }
+    for (const r of input.extraTimed ?? []) {
+      const at = wallClockToDate(r.at)
+      if (!at) continue
+      const delta = at.getTime() - now.getTime()
+      if (delta <= 0 || delta > windowMs) continue
+      out.push({ id: notificationId(r.key), key: r.key, at: at.toISOString(), title: r.title, body: r.body ?? '', channel: 'timed', route: r.route })
     }
   }
 

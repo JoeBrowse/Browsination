@@ -54,4 +54,16 @@ export interface ModuleDef {
   settings?: ComponentType
   /** Background work started once at boot (calendar sync, timers). Returns a disposer. */
   start?: (ctx: { db: SqlDriver }) => () => void
+  /** Time-critical reminders the module wants scheduled (e.g. medication times). Core plans, dedupes and toggles them. */
+  reminders?: (ctx: TodayContext) => Promise<ModuleReminder[]>
+}
+
+export interface ModuleReminder {
+  /** Unique, stable key ('med:<id>:2026-09-25T08:00'). */
+  key: string
+  /** Local wall clock 'YYYY-MM-DDTHH:MM'. */
+  at: string
+  title: string
+  body?: string
+  route: string
 }

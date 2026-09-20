@@ -148,3 +148,7 @@ input[type='checkbox'] { width: 24px; height: 24px; min-height: 0; accent-color:
 .viewer-body { flex: 1; overflow: auto; touch-action: pan-x pan-y pinch-zoom; }
 label.btn { cursor: pointer; }
 label.btn.disabled { opacity: 0.5; pointer-events: none; }
+
+.week-bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
+.week-bar > div { height: 100%; background: var(--accent); }
+button.tile { font: inherit; color: inherit; }

@@ -39,7 +39,11 @@ export function useCheckIn() {
         stats.push({ habit, tickedToday: ticks.has(habit.id), week: consistency(daysWith(stamps, dayStartHour), today, 7, habit.target_per_week) })
       }
       const lastMeditation = await repo.logs.lastOfType(LOG.meditation)
-      return { today, dayStartHour, mood: mood[0] ?? null, sleep: sleep[0] ?? null, meditation, stretch: stretch[0] ?? null, habits: stats, lastMeditationMinutes: lastMeditation?.value ?? 10 }
+      // The morning after a drinking session the check-in asks one extra question (Stage 6).
+      const yesterdayDrinks = await repo.entriesOn('drink', addDays(today, -1), dayStartHour)
+      const morningAfter = (await repo.entriesOn('morning_after', today, dayStartHour))[0] ?? null
+      const unitsYesterday = yesterdayDrinks.reduce((n, e) => n + Number(e.payload.units ?? 0), 0)
+      return { today, dayStartHour, mood: mood[0] ?? null, sleep: sleep[0] ?? null, meditation, stretch: stretch[0] ?? null, habits: stats, lastMeditationMinutes: lastMeditation?.value ?? 10, drankYesterday: yesterdayDrinks.length > 0, unitsYesterday, morningAfter }
     },
     ['log_entries', 'habits', 'settings'],
   )

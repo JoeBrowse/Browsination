@@ -38,6 +38,7 @@ src/modules/chess/      Stage 4: ics.ts (iCalendar reader + recurrence expansion
 src/core/league/        seasons, fixtures, stats and views shared by chess and snooker (`module` column)
 src/modules/banjo/      Stage 5: practice timer panel, sessions, goals, library with on-device sheet music and the full-screen viewer
 src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared view)
+src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
 src/core/ui/format.ts   pounds/pence, sparkline path, minutes labels; MoneyInput.tsx and Sparkline.tsx next to it
 src/core/time/zoned.ts  IANA-zone wall clock <-> UTC via Intl (used by the iCalendar reader)
 src/core/settings/      typed settings schema + defaults
@@ -51,7 +52,8 @@ src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
 - **No file over 400 lines** (ESLint `max-lines`, fails CI). Split by concern, not by line count.
 - **UI never touches SQL.** Screens call repositories; repositories call `SqlDriver`.
 - **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node. Network requests go through `platform/http.ts` (Capacitor HTTP natively, so the WebView's CORS rules do not apply).
-- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `settings` (Settings section), `start` (background work at boot, returns a disposer).
+- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `reminders` (timed notifications the planner schedules), `settings` (Settings section), `start` (background work at boot, returns a disposer).
+- **Alcohol module tone**: informative and neutral, positives and negatives, no lecturing, the disclaimer wherever an estimate is shown, and never any "safe to drive" indicator.
 - **Ids** are text UUIDs from `newId()`. Never integer autoincrement.
 - **Time.** Instants (things that happened) are ISO 8601 UTC strings + `tz_offset_min` captured at write. Scheduled things are civil: `due_date` `YYYY-MM-DD`, `due_time`/`reminder_at` local wall-clock. "Which day" is computed at read time with `localDayOf(ts, offset, dayStartHour)`; never store a day column.
 - **Every table**: `id`, `created_at`, `updated_at`; JSON columns are TEXT parsed in the repository.
