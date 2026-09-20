@@ -1,0 +1,243 @@
+{
+ "format": "browsination",
+ "formatVersion": 1,
+ "schemaVersion": 4,
+ "exportedAt": "2026-01-01T00:00:00.000Z",
+ "appVersion": "golden",
+ "tables": {
+  "settings": [
+   {
+    "key": "theme",
+    "value": "\"dark\"",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "people": [
+   {
+    "id": "p-1",
+    "name": "Sophie",
+    "relationship": "partner",
+    "birthday": "--05-14",
+    "notes": "Likes plants",
+    "last_contacted_at": "2026-09-20T10:00:00.000Z",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "keep_in_touch_days": null
+   }
+  ],
+  "gift_ideas": [
+   {
+    "id": "g-1",
+    "person_id": "p-1",
+    "title": "Monstera",
+    "notes": "",
+    "status": "idea",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "items": [
+   {
+    "id": "i-1",
+    "title": "Book dentist",
+    "notes": "Ask about the crown",
+    "module": null,
+    "status": "inbox",
+    "due_date": "2026-09-25",
+    "due_time": "09:30",
+    "reminder_at": "2026-09-25T09:00",
+    "recurrence": "FREQ=MONTHLY;INTERVAL=6",
+    "priority": 2,
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": null,
+    "chase_date": null,
+    "focus_date": null,
+    "series_id": null,
+    "recur_from": "due"
+   },
+   {
+    "id": "i-2",
+    "title": "Chase plumber quote",
+    "notes": "",
+    "module": "life",
+    "status": "waiting",
+    "due_date": null,
+    "due_time": null,
+    "reminder_at": null,
+    "recurrence": "FREQ=WEEKLY;BYDAY=MO",
+    "priority": 1,
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": "p-1",
+    "chase_date": "2026-09-28",
+    "focus_date": "2026-09-21",
+    "series_id": "i-2",
+    "recur_from": "done"
+   },
+   {
+    "id": "i-3",
+    "title": "Standing lamp",
+    "notes": "",
+    "module": "life",
+    "status": "todo",
+    "due_date": null,
+    "due_time": null,
+    "reminder_at": null,
+    "recurrence": null,
+    "priority": 0,
+    "entity_type": "life.list",
+    "entity_id": "buy",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": null,
+    "chase_date": null,
+    "focus_date": null,
+    "series_id": null,
+    "recur_from": "due"
+   }
+  ],
+  "log_entries": [
+   {
+    "id": "l-1",
+    "type": "mood",
+    "module": "brain",
+    "ts": "2026-09-20T10:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 4,
+    "unit": "score",
+    "payload": "{\"note\":\"good sleep\"}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   },
+   {
+    "id": "l-2",
+    "type": "habit",
+    "module": "brain",
+    "ts": "2026-09-21T09:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 1,
+    "unit": null,
+    "payload": "{}",
+    "entity_type": "brain.habit",
+    "entity_id": "h-1",
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z"
+   }
+  ],
+  "files": [
+   {
+    "id": "f-1",
+    "module": "banjo",
+    "entity_type": "banjo.piece",
+    "entity_id": "piece-1",
+    "rel_path": "files/banjo/f-1.pdf",
+    "mime": "application/pdf",
+    "title": "Cripple Creek",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "habits": [
+   {
+    "id": "h-1",
+    "name": "Read",
+    "target_per_week": 5,
+    "sort_order": 0,
+    "archived_at": null,
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z"
+   }
+  ],
+  "buy_details": [
+   {
+    "item_id": "i-3",
+    "price_pence": 4599,
+    "url": "https://example.com/lamp",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "date_nights": [
+   {
+    "id": "d-1",
+    "title": "Jazz night",
+    "status": "planned",
+    "date": "2026-10-03",
+    "place": "Cardiff",
+    "budget_pence": 6000,
+    "spent_pence": null,
+    "notes": "",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "trips": [
+   {
+    "id": "t-1",
+    "name": "Lisbon",
+    "destination": "Lisbon, PT",
+    "start_date": "2026-11-10",
+    "end_date": "2026-11-14",
+    "budget_pence": 80000,
+    "spent_pence": 21000,
+    "booking_refs": "[{\"label\":\"Hotel\",\"ref\":\"ABC123\"}]",
+    "notes": "",
+    "status": "planned",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "flight_prices": [
+   {
+    "id": "fp-1",
+    "trip_id": "t-1",
+    "checked_on": "2026-09-22",
+    "route": "BRS-LIS",
+    "price_pence": 9800,
+    "url": null,
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "admin_items": [
+   {
+    "id": "a-1",
+    "kind": "renewal",
+    "name": "Passport",
+    "due_date": "2029-03-01",
+    "recurrence": null,
+    "cost_pence": null,
+    "location": "Desk drawer",
+    "notes": "",
+    "last_done": null,
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   },
+   {
+    "id": "a-2",
+    "kind": "health",
+    "name": "Dentist",
+    "due_date": "2026-11-01",
+    "recurrence": "FREQ=MONTHLY;INTERVAL=6",
+    "cost_pence": null,
+    "location": "",
+    "notes": "",
+    "last_done": "2026-05-01",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ]
+ }
+}

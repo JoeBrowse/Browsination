@@ -7,6 +7,9 @@ import { ToastHost } from '../AppShell'
 import { ServicesContext } from '../services'
 import { TodayScreen } from './Today'
 
+// The screen is tested on its own: no real modules, so no module panels or cards.
+vi.mock('@/core/modules/registry', () => ({ getModules: () => [], modulePath: (id: string) => `/m/${id}` }))
+
 function renderToday(s = fakeServices()) {
   render(
     <ServicesContext.Provider value={s}>

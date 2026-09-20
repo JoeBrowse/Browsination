@@ -1,9 +1,10 @@
 import { dbEvents } from '../db/events'
 import type { SqlDriver } from '../db/driver'
+import type { ModuleDef } from '../modules/types'
 import type { PermissionState } from '../platform/notifications'
 import type { SettingsRepo } from '../repos/settings'
 import { taskQueries } from '../tasks/queries'
-import { calendarDay } from '../time/localDay'
+import { calendarDay, todayLocal } from '../time/localDay'
 import { planNotifications } from './planner'
 import { reconcile } from './reconcile'
 import type { NotificationPort } from './types'
@@ -13,6 +14,8 @@ export interface NotificationDeps {
   settings: SettingsRepo
   port: NotificationPort
   permission: () => Promise<PermissionState>
+  /** Modules whose `digest` hooks contribute lines to the morning digest. */
+  modules?: ModuleDef[]
   now?: () => Date
 }
 
@@ -34,8 +37,19 @@ export async function syncNotifications(deps: NotificationDeps): Promise<SyncRes
   const now = deps.now ? deps.now() : new Date()
   const tasks = taskQueries(deps.db)
   const items = await tasks.withReminders()
-  const counts = await tasks.counts(calendarDay(now))
-  const desired = planNotifications({ now, settings, items, counts })
+  const calendarToday = calendarDay(now)
+  const counts = await tasks.counts(calendarToday)
+  const ctx = { db: deps.db, today: todayLocal(now, settings.dayStartHour), calendarToday, now }
+  const extraLines: string[] = []
+  for (const m of deps.modules ?? []) {
+    if (!m.digest) continue
+    try {
+      extraLines.push(...(await m.digest(ctx)))
+    } catch {
+      /* a broken module never blocks the digest */
+    }
+  }
+  const desired = planNotifications({ now, settings, items, counts, extraLines })
   const plan = reconcile(desired, pending)
   if (plan.cancel.length) await deps.port.cancel(plan.cancel)
   if (plan.schedule.length) await deps.port.schedule(plan.schedule)

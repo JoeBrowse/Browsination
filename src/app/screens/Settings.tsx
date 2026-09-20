@@ -1,4 +1,5 @@
-import { Card, Screen, SectionTitle } from '@/core/ui/primitives'
+import { getModules } from '@/core/modules/registry'
+import { Card, ModuleScope, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useServices } from '../services'
 import { AppearanceSection } from './settings/AppearanceSection'
 import { DataSection } from './settings/DataSection'
@@ -12,6 +13,14 @@ export function SettingsScreen() {
       <DataSection />
       <SectionTitle>Notifications</SectionTitle>
       <NotificationsSection />
+      {getModules()
+        .flatMap((m) => (m.settings ? [{ m, Section: m.settings }] : []))
+        .map(({ m, Section }) => (
+          <ModuleScope key={m.id} accent={m.accent}>
+            <SectionTitle>{m.name}</SectionTitle>
+            <Section />
+          </ModuleScope>
+        ))}
       <SectionTitle>Appearance</SectionTitle>
       <AppearanceSection />
       <SectionTitle>About</SectionTitle>

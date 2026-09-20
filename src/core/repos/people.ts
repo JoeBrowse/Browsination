@@ -10,6 +10,8 @@ export interface PersonRow {
   birthday: string | null
   notes: string
   last_contacted_at: string | null
+  /** Nudge when not contacted for this many days (null = no nudge). */
+  keep_in_touch_days: number | null
   created_at: string
   updated_at: string
 }
@@ -37,6 +39,7 @@ export function peopleRepo(db: SqlDriver) {
         birthday: input.birthday ?? null,
         notes: input.notes ?? '',
         last_contacted_at: input.last_contacted_at ?? null,
+        keep_in_touch_days: input.keep_in_touch_days ?? null,
         created_at: t,
         updated_at: t,
       }

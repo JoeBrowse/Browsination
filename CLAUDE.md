@@ -33,6 +33,7 @@ src/app/tasks/          TaskRow, ItemSheet (create/edit/triage), FocusPicker, Wi
 src/app/capture/        QuickCapture (registers the FAB handler)
 src/core/consistency/   "x of last N days" and heat map maths (never streaks)
 src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
+src/modules/life/       Stage 3: lists over items, people and birthdays, date nights, trips, life admin; logic.ts holds the pure nudge maths
 src/core/settings/      typed settings schema + defaults
 src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
 src/modules/<id>/       one folder per module; registered in src/modules/index.ts

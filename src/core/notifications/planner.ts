@@ -24,6 +24,8 @@ export interface PlannerInput {
   settings: Pick<Settings, 'notifications.enabled' | 'notifications.morningDigest' | 'notifications.eveningDigest' | 'notifications.timed'>
   items: PlannerItem[]
   counts: DigestCounts
+  /** Module lines appended to the morning digest. */
+  extraLines?: string[]
   /** How far ahead individual reminders are scheduled. */
   windowDays?: number
 }
@@ -80,7 +82,7 @@ export function planNotifications(input: PlannerInput): PlannedNotification[] {
       key: DIGEST_KEYS.morning,
       at: nextDaily(morning.time, now).toISOString(),
       title: 'Today',
-      body: morningBody(counts),
+      body: [morningBody(counts), ...(input.extraLines ?? [])].join('\n'),
       channel: 'digest',
       route: '/today',
     })

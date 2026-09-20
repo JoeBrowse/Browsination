@@ -7,7 +7,7 @@
 | 0 Foundation | done | `stage-0` | scaffold, SQLite layer, migrations, snapshots, export/import, shell, CI APK |
 | 1 Capture, tasks, Today | done | `stage-1` | quick capture, triage, tasks, recurrence, focus, notifications, wins |
 | 2 Brain fitness, daily log | done | `stage-2` | check-in card (mood, sleep, meditation timer, stretch), habits with x-of-7 and heat map |
-| 3 Personal life | | | |
+| 3 Personal life | done | `stage-3` | lists, people and birthdays, date nights, trips with flight price log, life admin |
 | 4 Chess | | | |
 | 5 Banjo, snooker | | | |
 | 6 Alcohol, caffeine, medication | | | |
@@ -59,6 +59,19 @@ Deferred from Stage 1: swipe gestures for triage (tap-based actions instead, per
 - Golden export v3.
 
 Deferred from Stage 2: nothing in scope.
+
+## Stage 3: what was built
+
+- Module `life` (tray tile "Life", green accent) with a hub screen: Lists, People, Dates, Trips, Admin.
+- Lists: house, garden, buy, general as views over `items` (module `life`, entity `life.list`). Buy items carry a price estimate and link (`buy_details`); the buy list shows its total.
+- People: add/edit, relationship, birthday (year optional), notes, keep-in-touch interval, "Contacted" button (writes a `contact` log entry), gift ideas per person. Birthday cards and digest lines at configurable lead days (default 21 and 7) and on the day; keep-in-touch nudges with a one-tap "Contacted" action.
+- Date nights: ideas, planned (date, place, budget), history with spend; completion writes a `date_night` log entry. Nudge when nothing is planned within N weeks (default 3).
+- Trips: dates, destination, budget vs spent, booking references, checklist (items linked to the trip), manual flight price log with a trend line. Trips starting within 7 days appear on Today.
+- Life admin: renewals, health appointments, subscriptions (monthly total), documents with a "where is it" location. Recurring items roll to the next occurrence on Done (`admin_done` log entry). Cards and digest lines within the lead window (default 14 days). No fields for ID numbers.
+- Registry gains `digest` (module lines for the morning digest, batched) and `settings` (module section on the Settings screen). Life settings: birthday lead days, date-night nudge weeks, admin lead days, keep-in-touch toggle; every nudge can be switched off.
+- Migration 0004; golden export v4.
+
+Deferred from Stage 3: nothing in scope.
 
 ## Device checklist (run after installing a stage build)
 

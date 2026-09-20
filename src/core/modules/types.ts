@@ -48,4 +48,8 @@ export interface ModuleDef {
   today?: TodayContributor[]
   /** Interactive Today panels owned by the module (check-in cards, quick logs). Rendered inside the module's accent scope. */
   panels?: { key: string; component: ComponentType }[]
+  /** Short lines for the morning digest ("Sophie's birthday in 7 days"). Batched, never their own alarm. */
+  digest?: (ctx: TodayContext) => Promise<string[]>
+  /** Section rendered on the Settings screen under the module's name. */
+  settings?: ComponentType
 }

@@ -5,7 +5,7 @@ import type { ItemRow } from '@/core/repos/items'
 /** Minimal Services double for component tests. Only the members a screen touches are real. */
 export function fakeServices(over: Partial<Services> = {}): Services {
   const base = {
-    db: {} as never,
+    db: { query: async () => [], run: async () => ({ changes: 0 }), exec: async () => undefined, transaction: async (fn: (tx: unknown) => unknown) => fn(undefined), close: async () => undefined } as never,
     files: {} as never,
     appVersion: 'test',
     schemaVersion: 1,

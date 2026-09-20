@@ -11,6 +11,14 @@ export interface Settings {
   'notifications.eveningDigest': { enabled: boolean; time: string }
   'notifications.timed': boolean
   lastExportAt: string | null
+  /** Days before a birthday to mention it (empty = off). */
+  'life.birthdayLeadDays': number[]
+  /** Nudge when no date night is planned within this many weeks (0 = off). */
+  'life.dateNightNudgeWeeks': number
+  /** Days before a renewal, appointment or subscription to mention it (0 = off). */
+  'life.adminLeadDays': number
+  /** Keep-in-touch nudges on Today. */
+  'life.keepInTouch': boolean
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -21,6 +29,10 @@ export const SETTINGS_DEFAULTS: Settings = {
   'notifications.eveningDigest': { enabled: true, time: '20:30' },
   'notifications.timed': true,
   lastExportAt: null,
+  'life.birthdayLeadDays': [21, 7],
+  'life.dateNightNudgeWeeks': 3,
+  'life.adminLeadDays': 14,
+  'life.keepInTouch': true,
 }
 
 export type SettingKey = keyof Settings
