@@ -65,14 +65,26 @@ export function TodayScreen() {
       {d && d.due.length ? <Section title="Due today" items={notFocused(d.due)} onOpen={setEditing} onDone={complete} /> : null}
       {d && d.chase.length ? <Section title="Chase" items={notFocused(d.chase)} onOpen={setEditing} onDone={complete} /> : null}
       <SectionTitle>Calendar</SectionTitle>
-      <div className="muted small">No calendar yet</div>
-      {d && d.modules.shown.length ? (
+      {d && d.modules.shown.some((c) => c.kind === 'event') ? (
+        <div className="list">
+          {d.modules.shown
+            .filter((c) => c.kind === 'event')
+            .map((c) => (
+              <CardRow key={c.key} card={c} onOpen={() => c.href && navigate(c.href)} />
+            ))}
+        </div>
+      ) : (
+        <div className="muted small">Nothing in the calendar</div>
+      )}
+      {d && d.modules.shown.some((c) => c.kind !== 'event') ? (
         <>
           <SectionTitle>Modules</SectionTitle>
           <div className="list">
-            {d.modules.shown.map((c) => (
-              <CardRow key={c.key} card={c} onOpen={() => c.href && navigate(c.href)} />
-            ))}
+            {d.modules.shown
+              .filter((c) => c.kind !== 'event')
+              .map((c) => (
+                <CardRow key={c.key} card={c} onOpen={() => c.href && navigate(c.href)} />
+              ))}
           </div>
         </>
       ) : null}

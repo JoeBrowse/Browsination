@@ -36,9 +36,19 @@ function Ready({ services }: { services: Services }) {
       { onForeground, onBackground },
     )
     const offTap = onNotificationTap((route) => void router.navigate(route))
+    const offModules = getModules()
+      .filter((m) => m.start)
+      .map((m) => {
+        try {
+          return m.start!({ db: services.db })
+        } catch {
+          return () => undefined
+        }
+      })
     return () => {
       offSync()
       offTap()
+      offModules.forEach((off) => off())
     }
   }, [services, router])
   return (

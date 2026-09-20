@@ -8,7 +8,7 @@
 | 1 Capture, tasks, Today | done | `stage-1` | quick capture, triage, tasks, recurrence, focus, notifications, wins |
 | 2 Brain fitness, daily log | done | `stage-2` | check-in card (mood, sleep, meditation timer, stretch), habits with x-of-7 and heat map |
 | 3 Personal life | done | `stage-3` | lists, people and birthdays, date nights, trips with flight price log, life admin |
-| 4 Chess | | | |
+| 4 Chess | done | `stage-4` | calendar feeds cached offline, students and lesson plans, repertoire tree with review queue, tournaments, league |
 | 5 Banjo, snooker | | | |
 | 6 Alcohol, caffeine, medication | | | |
 | 7 Money | | | |
@@ -73,6 +73,20 @@ Deferred from Stage 2: nothing in scope.
 
 Deferred from Stage 3: nothing in scope.
 
+Note: the `stage-2` release was never created because that main build failed on a test-harness error (an unhandled rejection from the fake database in a component test), fixed in Stage 3. The `stage-3` build contains Stage 2.
+
+## Stage 4: what was built
+
+- Module `chess` (tray tile "Chess", gold accent) with a hub: Calendar, Students, Openings, Events, League.
+- Teaching calendar: add any iCalendar feed URL (Google Calendar's "Secret address in iCal format", one per calendar), enable/disable per calendar, manual Refresh, automatic sync on app start and on every return to the foreground (at most once per five minutes). Events are cached in `calendar_events` for 7 days back and 60 days ahead so the app works offline. Own RFC 5545 reader: unfolding, TZID and UTC times, all-day dates, RRULE subset (daily, weekly with BYDAY, monthly, yearly, INTERVAL, UNTIL, COUNT), EXDATE, RECURRENCE-ID overrides, cancelled events. Native HTTP goes through Capacitor's HTTP plugin (no CORS issue in the WebView). Today's events appear in Today's Calendar section; the digest says how many lessons today.
+- Students: profile (level, goals, notes) backed by a `people` row, lesson plan templates, per-lesson plan and after-lesson notes, optional link to a calendar event. Archive keeps history.
+- Repertoire: tree by colour, each line with PGN (plain text), notes, confidence 1-5, last reviewed. Review queue: never reviewed first, then by overdue days from a confidence-based interval (3, 7, 14, 30, 60 days). Today shows how many lines are due.
+- Tournaments: name, dates, location, entry deadline, fee, link, notes, entered / not yet / skipped. Nudges on Today and in the digest from 14 days before the deadline until entered or skipped.
+- League: seasons (default team Cardiff Crows), fixtures with date, opponent, their team, board, colour, result, ratings, optional PGN, notes; season summary (W-D-L, points, score %, average opponent rating, performance, by colour). Fixture results write `match_result` log entries. League tables and views live in `src/core/league` so snooker reuses them.
+- Registry gains `start` (module background work at boot). Migration 0005; golden export v5.
+
+Deferred from Stage 4: Google OAuth calendar access (the secret iCal address needs no Cloud console, no client ID and no signing fingerprint; see Later ideas for the OAuth walkthrough); PGN board viewer (nice-to-have per the spec).
+
 ## Device checklist (run after installing a stage build)
 
 - Fresh install opens to Today; five tabs navigate; theme toggle works.
@@ -116,7 +130,7 @@ Deferred from Stage 3: nothing in scope.
 - `VACUUM INTO` native .db snapshot alongside the JSON snapshot.
 - Zip export bundle (JSON + files) once sheet music exists (Stage 5 will add this).
 - Merge-import (combine two devices) instead of replace-all.
-- Google Calendar OAuth (read-only) as an alternative to the secret iCal address, with the Cloud console walkthrough.
+- Google Calendar OAuth (read-only) as an alternative to the secret iCal address. Walkthrough if ever wanted: Google Cloud console › new project › APIs & Services › enable "Google Calendar API" › OAuth consent screen (External, Testing, add your own Gmail as a test user) › Credentials › Create OAuth client ID › type Android › package `com.browsination.app` › SHA-1 from CLAUDE.md › paste the client ID into a Settings field. The app would then use an Authorization Code + PKCE flow through the system browser with the custom scheme redirect, store the refresh token in app storage, and call `calendarList` and `events.list` with `syncToken`. Refresh tokens for Testing-status projects expire after seven days unless the app is published, which is the main reason the iCal route was chosen.
 - Free flight price API (Stage 3) and free stock price API (Stage 7): evaluate terms before adding.
 - Light theme design pass.
 - Custom launcher icon (currently the Capacitor default).
