@@ -134,3 +134,10 @@ input[type='checkbox'] { width: 24px; height: 24px; min-height: 0; accent-color:
 .toast-action { margin-left: 14px; color: var(--accent); font-weight: 600; }
 .section-title .btn { margin-left: auto; min-height: 36px; padding: 0 12px; text-transform: none; letter-spacing: 0; font-size: 14px; }
 .section-title { display: flex; align-items: center; gap: 8px; }
+
+.heat { display: flex; gap: 4px; overflow-x: auto; padding: 4px 0; }
+.heat-week { display: flex; flex-direction: column; gap: 4px; }
+.heat-day { width: 14px; height: 14px; border-radius: 3px; background: var(--surface-2); display: block; }
+.heat-day.hit { background: var(--accent); }
+.heat-day.future { background: transparent; border: 1px dashed var(--border); }
+.check.on { color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }

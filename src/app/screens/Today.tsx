@@ -5,7 +5,7 @@ import type { TodayCard } from '@/core/modules/types'
 import type { ItemRow } from '@/core/repos/items'
 import { collectToday } from '@/core/today/collect'
 import { calendarDay, formatDay, todayLocal } from '@/core/time/localDay'
-import { Button, EmptyState, ListRow, Screen, SectionTitle } from '@/core/ui/primitives'
+import { Button, EmptyState, ListRow, ModuleScope, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { useServices } from '../services'
 import { FOCUS_CAP, FocusPicker } from '../tasks/FocusPicker'
@@ -43,9 +43,15 @@ export function TodayScreen() {
   const focusIds = new Set((d?.focus ?? []).map((i) => i.id))
   const notFocused = (list: ItemRow[]) => list.filter((i) => !focusIds.has(i.id))
   const empty = d && d.focus.length + d.overdue.length + d.due.length + d.chase.length + d.modules.shown.length === 0
+  const panels = getModules().flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, accent: m.accent })))
 
   return (
     <Screen title="Today" right={<span className="muted small">{formatDay(calendarToday)}</span>}>
+      {panels.map((p) => (
+        <ModuleScope key={p.key} accent={p.accent}>
+          <p.component />
+        </ModuleScope>
+      ))}
       <SectionTitle>
         Focus {d ? `${d.focus.length}/${FOCUS_CAP}` : ''}
         <Button onClick={() => setPicking(true)}>Pick</Button>

@@ -6,7 +6,7 @@
 |---|---|---|---|
 | 0 Foundation | done | `stage-0` | scaffold, SQLite layer, migrations, snapshots, export/import, shell, CI APK |
 | 1 Capture, tasks, Today | done | `stage-1` | quick capture, triage, tasks, recurrence, focus, notifications, wins |
-| 2 Brain fitness, daily log | | | |
+| 2 Brain fitness, daily log | done | `stage-2` | check-in card (mood, sleep, meditation timer, stretch), habits with x-of-7 and heat map |
 | 3 Personal life | | | |
 | 4 Chess | | | |
 | 5 Banjo, snooker | | | |
@@ -47,6 +47,18 @@ Deferred from Stage 0: nothing in scope. On-device checks not possible from this
 - Golden export v2.
 
 Deferred from Stage 1: swipe gestures for triage (tap-based actions instead, per the spec's "swipe or tap").
+
+## Stage 2: what was built
+
+- First module: `brain` (tray tile "Brain", purple accent). Registry gains `panels`: module-owned interactive Today cards rendered inside the module's accent scope.
+- Check-in panel on Today: mood 1-5 (one tap, optional note), sleep (bed time, wake time, quality; hours computed, wraps midnight), meditation (Done logs the last duration; Timer sheet counts down and logs elapsed minutes), stretch toggle, habit ticks with "x of 7" pills.
+- Migration 0003: `habits` (name, target per week, sort order, archived). Everything else is `log_entries` rows with module `brain`: `mood` (score), `sleep` (hours, payload bed/wake/quality), `meditation` (min), `stretch`, `habit` (entity `brain.habit`).
+- Consistency primitive (`src/core/consistency`): distinct days with the day-start rule, "x of last N days", proportional weekly target, 12-week heat map. No streaks anywhere.
+- Brain screen: habits list with consistency pills, add habit (name + target/week), last-14-days history table. Habit screen: 7-day and 28-day counts, heat map, rename, target, archive.
+- One-per-day types (mood, sleep, stretch) upsert today's entry; meditation entries accumulate.
+- Golden export v3.
+
+Deferred from Stage 2: nothing in scope.
 
 ## Device checklist (run after installing a stage build)
 

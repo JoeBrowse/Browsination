@@ -58,6 +58,14 @@ export function stampNow(now: Date = new Date()): { ts: string; tz_offset_min: n
   return { ts: now.toISOString(), tz_offset_min: tzOffsetMin(now) }
 }
 
+/** Instant range [day at dayStartHour, next day at dayStartHour) in the device zone. */
+export function logDayRange(day: LocalDay, dayStartHour: number): { from: string; to: string } {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number]
+  const from = new Date(y, m - 1, d, dayStartHour, 0, 0, 0)
+  const to = new Date(y, m - 1, d + 1, dayStartHour, 0, 0, 0)
+  return { from: from.toISOString(), to: to.toISOString() }
+}
+
 /** Format a civil day for display: 'Mon 21 Sep'. */
 export function formatDay(day: LocalDay): string {
   const [y, m, d] = day.split('-').map(Number) as [number, number, number]
