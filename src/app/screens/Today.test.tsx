@@ -40,7 +40,7 @@ describe('TodayScreen', () => {
     expect(screen.getByText('Due today · 1')).toBeTruthy()
     expect(screen.getAllByText('Deep work')).toHaveLength(1)
     expect(screen.getByText('Chase · 1')).toBeTruthy()
-    expect(screen.getByText('No calendar yet')).toBeTruthy()
+    expect(screen.getByText('Nothing in the calendar')).toBeTruthy()
   })
 
   it('completes an item in one tap and offers undo', async () => {

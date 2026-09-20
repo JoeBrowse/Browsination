@@ -34,6 +34,9 @@ src/app/capture/        QuickCapture (registers the FAB handler)
 src/core/consistency/   "x of last N days" and heat map maths (never streaks)
 src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
 src/modules/life/       Stage 3: lists over items, people and birthdays, date nights, trips, life admin; logic.ts holds the pure nudge maths
+src/modules/chess/      Stage 4: ics.ts (iCalendar reader + recurrence expansion), sync.ts, students, repertoire, tournaments
+src/core/league/        seasons, fixtures, stats and views shared by chess and snooker (`module` column)
+src/core/time/zoned.ts  IANA-zone wall clock <-> UTC via Intl (used by the iCalendar reader)
 src/core/settings/      typed settings schema + defaults
 src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
 src/modules/<id>/       one folder per module; registered in src/modules/index.ts
@@ -44,7 +47,8 @@ src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
 
 - **No file over 400 lines** (ESLint `max-lines`, fails CI). Split by concern, not by line count.
 - **UI never touches SQL.** Screens call repositories; repositories call `SqlDriver`.
-- **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node.
+- **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node. Network requests go through `platform/http.ts` (Capacitor HTTP natively, so the WebView's CORS rules do not apply).
+- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `settings` (Settings section), `start` (background work at boot, returns a disposer).
 - **Ids** are text UUIDs from `newId()`. Never integer autoincrement.
 - **Time.** Instants (things that happened) are ISO 8601 UTC strings + `tz_offset_min` captured at write. Scheduled things are civil: `due_date` `YYYY-MM-DD`, `due_time`/`reminder_at` local wall-clock. "Which day" is computed at read time with `localDayOf(ts, offset, dayStartHour)`; never store a day column.
 - **Every table**: `id`, `created_at`, `updated_at`; JSON columns are TEXT parsed in the repository.

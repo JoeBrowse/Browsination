@@ -52,4 +52,6 @@ export interface ModuleDef {
   digest?: (ctx: TodayContext) => Promise<string[]>
   /** Section rendered on the Settings screen under the module's name. */
   settings?: ComponentType
+  /** Background work started once at boot (calendar sync, timers). Returns a disposer. */
+  start?: (ctx: { db: SqlDriver }) => () => void
 }
