@@ -51,7 +51,7 @@ export function CheckInPanel() {
         <Button onClick={() => setSleepOpen(true)}>{d.sleep ? sleepSummary(d) : 'Log'}</Button>
       </Row>
       <Row label="Meditation">
-        <div className="btn-row" style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           {medMinutes ? <span className="pill accent">{medMinutes} min</span> : null}
           <Button onClick={() => void meditationDone(d.lastMeditationMinutes)}>Done</Button>
           <Button onClick={() => setTimerOpen(true)}>Timer</Button>
