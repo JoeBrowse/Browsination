@@ -1,46 +1,106 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getModules } from '@/core/modules/registry'
 import type { TodayCard } from '@/core/modules/types'
+import type { ItemRow } from '@/core/repos/items'
 import { collectToday } from '@/core/today/collect'
-import { calendarDay, todayLocal } from '@/core/time/localDay'
-import { Button, EmptyState, ListRow, Screen } from '@/core/ui/primitives'
+import { calendarDay, formatDay, todayLocal } from '@/core/time/localDay'
+import { Button, EmptyState, ListRow, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { useServices } from '../services'
+import { FOCUS_CAP, FocusPicker } from '../tasks/FocusPicker'
+import { ItemSheet } from '../tasks/ItemSheet'
+import { TaskRow } from '../tasks/TaskRow'
+import { useComplete } from '../tasks/useComplete'
 
 export const TODAY_CAP = 8
 
 export function TodayScreen() {
   const s = useServices()
   const navigate = useNavigate()
+  const complete = useComplete()
+  const [picking, setPicking] = useState(false)
+  const [editing, setEditing] = useState<ItemRow | null>(null)
+  const calendarToday = calendarDay()
+
   const q = useQuery(
     async () => {
       const dayStartHour = await s.settings.get('dayStartHour')
       const now = new Date()
-      return collectToday({ db: s.db, today: todayLocal(now, dayStartHour), calendarToday: calendarDay(now), now }, getModules(), TODAY_CAP)
+      const today = todayLocal(now, dayStartHour)
+      const [focus, overdue, due, chase, modules] = await Promise.all([
+        s.tasks.focus(calendarToday),
+        s.tasks.overdue(calendarToday),
+        s.tasks.dueOn(calendarToday),
+        s.tasks.chaseDue(calendarToday),
+        collectToday({ db: s.db, today, calendarToday, now }, getModules(), TODAY_CAP),
+      ])
+      return { focus, overdue, due, chase, modules }
     },
     ['*'],
   )
-  const cards = q.data?.shown ?? []
+  const d = q.data
+  const focusIds = new Set((d?.focus ?? []).map((i) => i.id))
+  const notFocused = (list: ItemRow[]) => list.filter((i) => !focusIds.has(i.id))
+  const empty = d && d.focus.length + d.overdue.length + d.due.length + d.chase.length + d.modules.shown.length === 0
+
   return (
-    <Screen title="Today">
-      {q.loading ? null : cards.length === 0 ? <EmptyState>Nothing here yet</EmptyState> : null}
+    <Screen title="Today" right={<span className="muted small">{formatDay(calendarToday)}</span>}>
+      <SectionTitle>
+        Focus {d ? `${d.focus.length}/${FOCUS_CAP}` : ''}
+        <Button onClick={() => setPicking(true)}>Pick</Button>
+      </SectionTitle>
       <div className="list">
-        {cards.map((c) => (
-          <TodayRow key={c.key} card={c} onOpen={() => c.href && navigate(c.href)} />
+        {(d?.focus ?? []).map((i) => (
+          <TaskRow key={i.id} item={i} onOpen={setEditing} onDone={(it) => void complete(it)} />
         ))}
       </div>
-      {q.data && Object.keys(q.data.collapsed).length > 0 ? (
+      {d && d.overdue.length ? <Section title="Overdue" items={notFocused(d.overdue)} onOpen={setEditing} onDone={complete} /> : null}
+      {d && d.due.length ? <Section title="Due today" items={notFocused(d.due)} onOpen={setEditing} onDone={complete} /> : null}
+      {d && d.chase.length ? <Section title="Chase" items={notFocused(d.chase)} onOpen={setEditing} onDone={complete} /> : null}
+      <SectionTitle>Calendar</SectionTitle>
+      <div className="muted small">No calendar yet</div>
+      {d && d.modules.shown.length ? (
+        <>
+          <SectionTitle>Modules</SectionTitle>
+          <div className="list">
+            {d.modules.shown.map((c) => (
+              <CardRow key={c.key} card={c} onOpen={() => c.href && navigate(c.href)} />
+            ))}
+          </div>
+        </>
+      ) : null}
+      {d && Object.keys(d.modules.collapsed).length > 0 ? (
         <div className="muted small" style={{ marginTop: 10 }}>
-          {Object.entries(q.data.collapsed)
+          {Object.entries(d.modules.collapsed)
             .map(([m, n]) => `${n} more in ${m}`)
             .join(', ')}
         </div>
       ) : null}
+      {empty ? <EmptyState>Clear</EmptyState> : null}
+      <FocusPicker open={picking} onClose={() => setPicking(false)} today={calendarToday} />
+      <ItemSheet item={editing} open={editing !== null} onClose={() => setEditing(null)} />
     </Screen>
   )
 }
 
-function TodayRow({ card, onOpen }: { card: TodayCard; onOpen: () => void }) {
+function Section({ title, items, onOpen, onDone }: { title: string; items: ItemRow[]; onOpen: (i: ItemRow) => void; onDone: (i: ItemRow) => Promise<void> }) {
+  if (items.length === 0) return null
+  return (
+    <>
+      <SectionTitle>
+        {title} · {items.length}
+      </SectionTitle>
+      <div className="list">
+        {items.map((i) => (
+          <TaskRow key={i.id} item={i} onOpen={onOpen} onDone={(it) => void onDone(it)} />
+        ))}
+      </div>
+    </>
+  )
+}
+
+function CardRow({ card, onOpen }: { card: TodayCard; onOpen: () => void }) {
   return (
     <ListRow
       title={card.title}

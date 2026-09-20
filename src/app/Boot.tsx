@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { RouterProvider } from 'react-router/dom'
 import { exportDatabase, exportFilename, serializeEnvelope } from '@/core/backup/exportDb'
+import { installNotificationSync } from '@/core/notifications/service'
+import { onBackground, onForeground } from '@/core/platform/appEvents'
 import { createAppDriver } from '@/core/platform/db'
 import { saveExportFile } from '@/core/platform/exportTransport'
+import { checkNotificationPermission, createNotificationPort, onNotificationTap } from '@/core/platform/notifications'
 import { Button } from '@/core/ui/primitives'
 import { bootApp } from './boot'
 import { buildRouter } from './router'
@@ -21,9 +24,25 @@ export function Boot() {
 
   if (state.status === 'loading') return null
   if (state.status === 'error') return <BootFailed error={state.error} />
+  return <Ready services={state.services} />
+}
+
+function Ready({ services }: { services: Services }) {
+  const router = useMemo(() => buildRouter(), [])
+  useEffect(() => {
+    const offSync = installNotificationSync(
+      { db: services.db, settings: services.settings, port: createNotificationPort(), permission: checkNotificationPermission },
+      { onForeground, onBackground },
+    )
+    const offTap = onNotificationTap((route) => void router.navigate(route))
+    return () => {
+      offSync()
+      offTap()
+    }
+  }, [services, router])
   return (
-    <ServicesContext.Provider value={state.services}>
-      <RouterProvider router={buildRouter()} />
+    <ServicesContext.Provider value={services}>
+      <RouterProvider router={router} />
     </ServicesContext.Provider>
   )
 }

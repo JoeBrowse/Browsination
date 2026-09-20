@@ -123,3 +123,14 @@ input[type='checkbox'] { width: 24px; height: 24px; min-height: 0; accent-color:
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); font-size: 13px; }
 .pill.accent { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent); }
 .kv { display: flex; justify-content: space-between; gap: 12px; min-height: 40px; align-items: center; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); font-size: 14px; }
+.chip.on { background: var(--accent); color: var(--accent-contrast); border-color: transparent; font-weight: 600; }
+.task-row { align-items: flex-start; }
+.task-body { flex: 1; min-width: 0; text-align: left; padding: 4px 0; }
+.check { width: 36px; height: 36px; margin-top: 6px; border-radius: 50%; border: 2px solid var(--muted); display: flex; align-items: center; justify-content: center; color: transparent; flex-shrink: 0; }
+.check:active { color: var(--accent); border-color: var(--accent); }
+.toast-action { margin-left: 14px; color: var(--accent); font-weight: 600; }
+.section-title .btn { margin-left: auto; min-height: 36px; padding: 0 12px; text-transform: none; letter-spacing: 0; font-size: 14px; }
+.section-title { display: flex; align-items: center; gap: 8px; }

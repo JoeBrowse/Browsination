@@ -1,5 +1,6 @@
 import { BarChart3, Inbox, LayoutGrid, Plus, Settings, Sun } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
+import { QuickCapture } from './capture/QuickCapture'
 import { useShell } from './shellStore'
 
 const TABS = [
@@ -23,7 +24,7 @@ export function BottomNav() {
   )
 }
 
-/** Global quick-capture button. Renders nothing until a feature registers a handler (Stage 1). */
+/** Global quick-capture button. Renders nothing until a feature registers a handler. */
 export function QuickCaptureSlot() {
   const handler = useShell((s) => s.captureHandler)
   if (!handler) return null
@@ -35,19 +36,32 @@ export function QuickCaptureSlot() {
 }
 
 export function ToastHost() {
-  const msg = useShell((s) => s.toast)
-  if (!msg) return null
+  const t = useShell((s) => s.toast)
+  const clear = useShell((s) => s.clearToast)
+  if (!t) return null
   return (
     <div className="toast" role="status">
-      {msg}
+      {t.message}
+      {t.action ? (
+        <button
+          className="toast-action"
+          onClick={() => {
+            clear()
+            void t.action?.run()
+          }}
+        >
+          {t.action.label}
+        </button>
+      ) : null}
     </div>
   )
 }
 
-export function AppShell() {
+export function AppShell({ capture = true }: { capture?: boolean }) {
   return (
     <>
       <Outlet />
+      {capture ? <QuickCapture /> : null}
       <QuickCaptureSlot />
       <BottomNav />
       <ToastHost />
