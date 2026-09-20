@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { RouterProvider } from 'react-router/dom'
 import { exportDatabase, exportFilename, serializeEnvelope } from '@/core/backup/exportDb'
+import { getModules } from '@/core/modules/registry'
 import { installNotificationSync } from '@/core/notifications/service'
 import { onBackground, onForeground } from '@/core/platform/appEvents'
 import { createAppDriver } from '@/core/platform/db'
@@ -31,7 +32,7 @@ function Ready({ services }: { services: Services }) {
   const router = useMemo(() => buildRouter(), [])
   useEffect(() => {
     const offSync = installNotificationSync(
-      { db: services.db, settings: services.settings, port: createNotificationPort(), permission: checkNotificationPermission },
+      { db: services.db, settings: services.settings, port: createNotificationPort(), permission: checkNotificationPermission, modules: getModules() },
       { onForeground, onBackground },
     )
     const offTap = onNotificationTap((route) => void router.navigate(route))
