@@ -1,0 +1,88 @@
+{
+ "format": "browsination",
+ "formatVersion": 1,
+ "schemaVersion": 1,
+ "exportedAt": "2026-01-01T00:00:00.000Z",
+ "appVersion": "golden",
+ "tables": {
+  "settings": [
+   {
+    "key": "theme",
+    "value": "\"dark\"",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "people": [
+   {
+    "id": "p-1",
+    "name": "Sophie",
+    "relationship": "partner",
+    "birthday": "--05-14",
+    "notes": "Likes plants",
+    "last_contacted_at": "2026-09-20T10:00:00.000Z",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "gift_ideas": [
+   {
+    "id": "g-1",
+    "person_id": "p-1",
+    "title": "Monstera",
+    "notes": "",
+    "status": "idea",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "items": [
+   {
+    "id": "i-1",
+    "title": "Book dentist",
+    "notes": "Ask about the crown",
+    "module": null,
+    "status": "inbox",
+    "due_date": "2026-09-25",
+    "due_time": "09:30",
+    "reminder_at": "2026-09-25T09:00",
+    "recurrence": "FREQ=MONTHLY;INTERVAL=6",
+    "priority": 2,
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "completed_at": null
+   }
+  ],
+  "log_entries": [
+   {
+    "id": "l-1",
+    "type": "mood",
+    "module": "brain",
+    "ts": "2026-09-20T10:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 4,
+    "unit": "score",
+    "payload": "{\"note\":\"good sleep\"}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "files": [
+   {
+    "id": "f-1",
+    "module": "banjo",
+    "entity_type": "banjo.piece",
+    "entity_id": "piece-1",
+    "rel_path": "files/banjo/f-1.pdf",
+    "mime": "application/pdf",
+    "title": "Cripple Creek",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ]
+ }
+}

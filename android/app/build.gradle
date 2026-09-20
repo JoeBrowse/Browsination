@@ -1,0 +1,71 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.browsination.app"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.browsination.app"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        // CI sets these from git (commit count / describe) so every build on main is an upgrade.
+        versionCode (System.getenv("VERSION_CODE") ?: "1").toInteger()
+        versionName (System.getenv("VERSION_NAME") ?: "dev")
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    // One project keystore so every build (CI or local) carries the same signature and
+    // installs over the previous one. Changing it would force an uninstall and lose all data.
+    // If the file is absent the default debug key is used (signature then differs per machine).
+    def stableKeystore = file('../keystore/debug.keystore')
+    signingConfigs {
+        stable {
+            storeFile stableKeystore
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: 'android'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'androiddebugkey'
+            keyPassword System.getenv("KEY_PASSWORD") ?: 'android'
+        }
+    }
+    buildTypes {
+        debug {
+            if (stableKeystore.exists()) signingConfig signingConfigs.stable
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (stableKeystore.exists()) signingConfig signingConfigs.stable
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

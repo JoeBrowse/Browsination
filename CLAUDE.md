@@ -1,0 +1,66 @@
+# Browsination
+
+Personal life manager for one user (Joe). React + TypeScript + Vite, packaged for Android with Capacitor 8. Local-first SQLite. No accounts, no server.
+
+## Commands
+
+| Command | What |
+|---|---|
+| `npm run dev` | Desktop browser dev server (sql.js database persisted in IndexedDB) |
+| `npm run check` | typecheck + lint + tests (what CI runs before building the APK) |
+| `npm test` | Vitest (`WRITE_GOLDEN=1 npx vitest run src/test/golden` writes the golden export for a new schema version) |
+| `npm run build` | Production web build into `dist/` |
+| `npm run apk` | build + `cap sync android` + `gradlew assembleDebug` (needs Android SDK + JDK 21 locally) |
+
+CI (`.github/workflows/ci.yml`): `check` on every push/PR; `apk` on push to `main` and on `stage-*` tags. Tag builds attach the APK to a GitHub Release.
+
+## Layout
+
+```
+src/main.tsx            boot
+src/app/                shell: Boot, boot.ts (open db -> snapshot -> migrate), router, AppShell (nav, FAB slot, toast), screens/, services.ts
+src/core/db/            SqlDriver interface, driver.sqljs (web + tests), driver.native (Android), migrate.ts, migrations/, schema.ts, events.ts
+src/core/repos/         repositories: the only place SQL is written for app data
+src/core/backup/        export/import envelope, snapshots, FileStore interface
+src/core/platform/      the only files allowed to import @capacitor/* (lint-enforced): db, fileStore, exportTransport, notifications, appEvents
+src/core/modules/       ModuleDef contract + registry (the single core -> modules import)
+src/core/today/         collectToday: merges module cards, sorts, caps
+src/core/time/          localDay: day-start-hour rule, civil day arithmetic
+src/core/settings/      typed settings schema + defaults
+src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
+src/modules/<id>/       one folder per module; registered in src/modules/index.ts
+src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
+```
+
+## Conventions
+
+- **No file over 400 lines** (ESLint `max-lines`, fails CI). Split by concern, not by line count.
+- **UI never touches SQL.** Screens call repositories; repositories call `SqlDriver`.
+- **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node.
+- **Ids** are text UUIDs from `newId()`. Never integer autoincrement.
+- **Time.** Instants (things that happened) are ISO 8601 UTC strings + `tz_offset_min` captured at write. Scheduled things are civil: `due_date` `YYYY-MM-DD`, `due_time`/`reminder_at` local wall-clock. "Which day" is computed at read time with `localDayOf(ts, offset, dayStartHour)`; never store a day column.
+- **Every table**: `id`, `created_at`, `updated_at`; JSON columns are TEXT parsed in the repository.
+- **Migrations** (`src/core/db/migrations/NNNN_name.ts`): plain SQL, append-only, contiguous versions, one transaction each, checksum-verified. Declare `tables` (parent first) and `fixtures` (one full row per table). Adding a table = migration + repository + fixtures; export/import and the round-trip test pick it up automatically. Portable SQL only: no STRICT tables, no generated columns, no RETURNING, no DROP COLUMN (rebuild instead). `PRAGMA foreign_keys` cannot be changed inside a transaction.
+- **Export/import** is our own JSON envelope (`src/core/backup/format.ts`), never the plugin's. Import is replace-all: drop, migrate to the file's version, insert, migrate to head, foreign-key check; on failure the in-memory copy is restored. A golden export per schema version lives in `src/test/golden/` and must import forever.
+- **Snapshots** are the same envelope written to app storage before every migration and import (keep 10).
+- **Today cards are data** (`TodayCard`), not JSX. Core renders them and enforces the cap.
+- **Module accent** is one CSS variable (`--accent`) set by `ModuleScope`; components inherit it.
+- **Forgiving consistency, never streaks.** Show "x of last 7 days". No red badges, no guilt copy.
+- **No prose in the UI.** Labels are one or two words.
+- Locale: en-GB, Europe/London, Monday week start, 24-hour clock, GBP stored as integer pence.
+
+## Adding a module (Stage N recipe)
+
+1. `src/modules/<id>/module.ts` exporting a `ModuleDef` (id from `ModuleId`, one-word `name`, lucide `icon`, `accent`, `order`, `routes`, optional `today` contributors).
+2. `src/core/db/migrations/NNNN_<id>.ts` with `tables` + `fixtures`; append to `MIGRATIONS`.
+3. `src/modules/<id>/repo.ts` for the module's tables; use core repos for `items`, `log_entries`, `people`, `files`.
+4. Add the module to `src/modules/index.ts`. Add the `ModuleId` to `src/core/modules/types.ts` if new.
+5. Logic in `src/modules/<id>/logic/*.ts` is pure and unit-tested.
+6. `npm run check`, then `WRITE_GOLDEN=1 npx vitest run src/test/golden` for the new schema version.
+
+## Android
+
+- `appId` `com.browsination.app` and the signing key in `android/keystore/debug.keystore` are permanent. Changing either makes Android treat the build as a different app and loses on-device data. Signing SHA-1: `51:6B:38:1C:38:05:8A:C3:37:8A:95:AD:3E:1E:C3:E7:0C:E1:B5:71`.
+- `versionCode` comes from the git commit count (`VERSION_CODE` env in CI); `versionName` from `git describe`.
+- Manifest adds `USE_EXACT_ALARM` (sideloaded personal app, never on Play). The notifications plugin already declares `POST_NOTIFICATIONS` and `SCHEDULE_EXACT_ALARM`.
+- `npx cap sync android` regenerates `android/app/src/main/assets/public`, `capacitor.build.gradle` and the cordova plugins folder; the first two are not committed.

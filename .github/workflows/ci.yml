@@ -1,0 +1,74 @@
+name: ci
+
+on:
+  push:
+    branches: ['**']
+    tags: ['stage-*']
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  apk:
+    needs: check
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/stage-'))
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - id: ver
+        name: Version from git
+        run: |
+          echo "code=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+          echo "name=$(git describe --tags --always)" >> "$GITHUB_OUTPUT"
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_BUILD: ${{ steps.ver.outputs.name }}
+      - run: npx cap sync android
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Build debug APK
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ steps.ver.outputs.code }}
+          VERSION_NAME: ${{ steps.ver.outputs.name }}
+        run: ./gradlew assembleDebug --no-daemon
+      - run: cp android/app/build/outputs/apk/debug/app-debug.apk browsination-${{ steps.ver.outputs.name }}.apk
+      - uses: actions/upload-artifact@v7
+        with:
+          name: browsination-${{ steps.ver.outputs.name }}
+          path: browsination-${{ steps.ver.outputs.name }}.apk
+          retention-days: 90
+      - uses: softprops/action-gh-release@v3
+        if: startsWith(github.ref, 'refs/tags/stage-')
+        with:
+          name: ${{ github.ref_name }}
+          files: browsination-${{ steps.ver.outputs.name }}.apk
+          body: 'Debug APK for ${{ github.ref_name }}. Install over the previous build; no uninstall needed.'
