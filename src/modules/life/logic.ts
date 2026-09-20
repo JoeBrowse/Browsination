@@ -1,6 +1,8 @@
 import type { PersonRow } from '@/core/repos/people'
 import { daysBetween, type LocalDay } from '@/core/time/localDay'
 
+export { parsePounds, pounds, sparklinePath } from '@/core/ui/format'
+
 /** Next occurrence of a birthday ('YYYY-MM-DD' or '--MM-DD') on or after today. */
 export function nextBirthday(birthday: string, today: LocalDay): { day: LocalDay; daysUntil: number; age: number | null } | null {
   const m = /^(\d{4}|-)-(\d{2})-(\d{2})$/.exec(birthday)
@@ -69,30 +71,4 @@ export function adminNudges(items: AdminLike[], today: LocalDay, leadDays: numbe
     out.push({ key: `admin:${a.id}`, title: `${a.name} ${when}`, sub: a.kind, priority: d <= 0 ? 0 : 2, href: '/m/life/admin' })
   }
   return out
-}
-
-/** SVG path for a small trend line. */
-export function sparklinePath(values: number[], width = 200, height = 40, pad = 3): string {
-  if (values.length === 0) return ''
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  const span = max - min || 1
-  const step = values.length > 1 ? (width - pad * 2) / (values.length - 1) : 0
-  return values
-    .map((v, i) => {
-      const x = pad + i * step
-      const y = height - pad - ((v - min) / span) * (height - pad * 2)
-      return `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`
-    })
-    .join(' ')
-}
-
-export function pounds(pence: number | null | undefined): string {
-  if (pence === null || pence === undefined) return ''
-  return `£${(pence / 100).toFixed(2).replace(/\.00$/, '')}`
-}
-
-export function parsePounds(text: string): number | null {
-  const n = Number(text.replace(/[£,\s]/g, ''))
-  return Number.isFinite(n) && text.trim() !== '' ? Math.round(n * 100) : null
 }

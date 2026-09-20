@@ -9,7 +9,7 @@
 | 2 Brain fitness, daily log | done | `stage-2` | check-in card (mood, sleep, meditation timer, stretch), habits with x-of-7 and heat map |
 | 3 Personal life | done | `stage-3` | lists, people and birthdays, date nights, trips with flight price log, life admin |
 | 4 Chess | done | `stage-4` | calendar feeds cached offline, students and lesson plans, repertoire tree with review queue, tournaments, league |
-| 5 Banjo, snooker | | | |
+| 5 Banjo, snooker | done | `stage-5` | practice timer and sessions, goals, sheet music library with keep-awake viewer; breaks, routines with stats, league |
 | 6 Alcohol, caffeine, medication | | | |
 | 7 Money | | | |
 | 8 Work, side projects | | | |
@@ -86,6 +86,15 @@ Note: the `stage-2` release was never created because that main build failed on 
 - Registry gains `start` (module background work at boot). Migration 0005; golden export v5.
 
 Deferred from Stage 4: Google OAuth calendar access (the secret iCal address needs no Cloud console, no client ID and no signing fingerprint; see Later ideas for the OAuth walkthrough); PGN board viewer (nice-to-have per the spec).
+
+## Stage 5: what was built
+
+- Module `banjo` (orange accent). Today panel: Start/Stop practice timer (survives an app restart), "x of 7" pill, minutes this week; stopping opens a one-field sheet for what was worked on and an optional piece, then logs a `practice` entry with start and end instants. Hub: 7-day and 28-day consistency, 12-week heat map, recent sessions, manual Log. Goals (pieces or techniques, target date, done). Library: pieces with tuning and status (learning, polishing, ready), PDF or image files imported from the device picker and stored under the app data directory with a `files` row; full-screen viewer (pdf.js for PDFs, native image for pictures, zoom) that keeps the screen awake via the keep-awake plugin (Screen Wake Lock in a browser). Sessions screen edits worked-on, notes and minutes.
+- Module `snooker` (teal accent). Highest break with one-tap logging (`break` entries), practice routines defined by the user with attempts (`routine_attempt` entries): personal best, recent average of the last ten with delta against earlier, attempt count, trend line of the last twenty. League reuses the shared league view without board, colour, ratings or PGN. Practised-this-week consistency.
+- Shared: `MoneyInput`, `pounds`, `sparklinePath` moved to `src/core/ui`; the file store gained base64 read/write and display URLs (Capacitor file URIs converted for the WebView).
+- Migration 0006; golden export v6.
+
+Deferred from Stage 5: PDF files are stored on the device but are not part of the JSON export (metadata is); a zip bundle remains in Later ideas.
 
 ## Device checklist (run after installing a stage build)
 

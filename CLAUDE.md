@@ -36,6 +36,9 @@ src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
 src/modules/life/       Stage 3: lists over items, people and birthdays, date nights, trips, life admin; logic.ts holds the pure nudge maths
 src/modules/chess/      Stage 4: ics.ts (iCalendar reader + recurrence expansion), sync.ts, students, repertoire, tournaments
 src/core/league/        seasons, fixtures, stats and views shared by chess and snooker (`module` column)
+src/modules/banjo/      Stage 5: practice timer panel, sessions, goals, library with on-device sheet music and the full-screen viewer
+src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared view)
+src/core/ui/format.ts   pounds/pence, sparkline path, minutes labels; MoneyInput.tsx and Sparkline.tsx next to it
 src/core/time/zoned.ts  IANA-zone wall clock <-> UTC via Intl (used by the iCalendar reader)
 src/core/settings/      typed settings schema + defaults
 src/core/ui/            tokens.css, primitives, Sheet, useQuery, theme
