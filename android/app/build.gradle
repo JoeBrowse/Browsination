@@ -17,24 +17,26 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
-    // One committed keystore so every build (CI or local) carries the same signature and
+    // One project keystore so every build (CI or local) carries the same signature and
     // installs over the previous one. Changing it would force an uninstall and lose all data.
+    // If the file is absent the default debug key is used (signature then differs per machine).
+    def stableKeystore = file('../keystore/debug.keystore')
     signingConfigs {
         stable {
-            storeFile file('../keystore/debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile stableKeystore
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: 'android'
+            keyAlias System.getenv("KEY_ALIAS") ?: 'androiddebugkey'
+            keyPassword System.getenv("KEY_PASSWORD") ?: 'android'
         }
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.stable
+            if (stableKeystore.exists()) signingConfig signingConfigs.stable
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.stable
+            if (stableKeystore.exists()) signingConfig signingConfigs.stable
         }
     }
 }
