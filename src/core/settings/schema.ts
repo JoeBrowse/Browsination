@@ -19,6 +19,19 @@ export interface Settings {
   'life.adminLeadDays': number
   /** Keep-in-touch nudges on Today. */
   'life.keepInTouch': boolean
+  /** Body weight for the alcohol model (kg). */
+  'alcohol.weightKg': number
+  'alcohol.sex': 'male' | 'female'
+  /** Usual bedtime 'HH:MM' and sleep length, for the sleep-impact estimate. */
+  'alcohol.usualBedtime': string
+  'alcohol.usualSleepHours': number
+  /** Elimination rate in g/L per hour (population mean 0.15). */
+  'alcohol.eliminationRate': number
+  /** Absorption half-life in minutes (12 typical; 6 fasting, 20+ after a meal). */
+  'alcohol.absorptionHalfLifeMin': number
+  'caffeine.halfLifeHours': number
+  /** Medication reminders as individual timed notifications. */
+  'alcohol.medicationReminders': boolean
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -33,6 +46,14 @@ export const SETTINGS_DEFAULTS: Settings = {
   'life.dateNightNudgeWeeks': 3,
   'life.adminLeadDays': 14,
   'life.keepInTouch': true,
+  'alcohol.weightKg': 80,
+  'alcohol.sex': 'male',
+  'alcohol.usualBedtime': '23:00',
+  'alcohol.usualSleepHours': 8,
+  'alcohol.eliminationRate': 0.15,
+  'alcohol.absorptionHalfLifeMin': 12,
+  'caffeine.halfLifeHours': 5,
+  'alcohol.medicationReminders': true,
 }
 
 export type SettingKey = keyof Settings

@@ -10,7 +10,7 @@
 | 3 Personal life | done | `stage-3` | lists, people and birthdays, date nights, trips with flight price log, life admin |
 | 4 Chess | done | `stage-4` | calendar feeds cached offline, students and lesson plans, repertoire tree with review queue, tournaments, league |
 | 5 Banjo, snooker | done | `stage-5` | practice timer and sessions, goals, sheet music library with keep-awake viewer; breaks, routines with stats, league |
-| 6 Alcohol, caffeine, medication | | | |
+| 6 Alcohol, caffeine, medication | done | `stage-6` | drink presets with forecast before confirming, cumulative Widmark model, caffeine half-life, medication log with reminders, morning-after question |
 | 7 Money | | | |
 | 8 Work, side projects | | | |
 | 9 Weekly review, focus, insights | | | |
@@ -95,6 +95,18 @@ Deferred from Stage 4: Google OAuth calendar access (the secret iCal address nee
 - Migration 0006; golden export v6.
 
 Deferred from Stage 5: PDF files are stored on the device but are not part of the JSON export (metadata is); a zip bundle remains in Later ideas.
+
+## Stage 6: what was built
+
+- Module `alcohol` (tray tile "Drinks", rose accent). Today panel: "same as last time" drink and caffeine in one tap, "Other" opens the sheet, units today, current estimate, medication ticks.
+- Drink sheet: UK presets (pint, half, bottle, can, wine 125/175/250, single, double, custom) with editable ml, ABV and time; stored as grams of ethanol (value) with UK units and the measure in the payload. Before confirming: chart of the estimated curve with and without this drink, peak time and level, back-to-zero time, plain-language timeline (feeling best, tipping negative, back to zero), sleep impact at the usual bedtime and next-morning note, session units and rolling-week units against the 14-unit guideline. Disclaimer on the sheet, the hub and Settings. No fitness-to-drive indicator anywhere; bands never mention driving (tested).
+- Model (`src/modules/alcohol/model.ts`, pure, tested): Widmark distribution (r 0.68 male / 0.55 female), first-order absorption per drink (half-life default 12 min), zero-order elimination (0.15 g/L per hour) that only runs while alcohol is present, minute-step simulation so every drink still in the system carries over. Parameters live in Settings (weight, sex, bedtime, sleep length, elimination rate, absorption half-life).
+- Caffeine: presets (espresso, coffee, instant, tea, green tea, energy drink, cola) or custom mg, simple half-life decay (default 5 h, adjustable), "still active at bedtime" estimate on the sheet and the hub.
+- Medication: name, dose, reminder times; Taken button and Today ticks (`medication` log entries); reminders are timed notifications through the shared planner (module `reminders` hook), skipping today's dose once taken; switchable in Settings.
+- Morning after: the brain check-in asks "how do you feel, 1-5" when the previous logical day had drinks (`morning_after` entry with the units drunk).
+- Migration 0007 (`medications`); golden export v7.
+
+Deferred from Stage 6: nothing in scope.
 
 ## Device checklist (run after installing a stage build)
 
