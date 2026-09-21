@@ -56,7 +56,6 @@ function Summary({ now, before }: { now: PeriodSummary; before: PeriodSummary })
     line('Meditation min', now.meditationMin, before.meditationMin),
     line('Practice min', now.practiceMin, before.practiceMin),
     line('Focus min', now.focusMin, before.focusMin),
-    line('Workouts', now.workouts, before.workouts),
     { label: 'Mood', value: now.moodAvg === null ? '–' : now.moodAvg.toFixed(1), delta: deltaOf(now.moodAvg, before.moodAvg, 1) },
     { label: 'Sleep h', value: now.sleepAvg === null ? '–' : now.sleepAvg.toFixed(1), delta: deltaOf(now.sleepAvg, before.sleepAvg, 1) },
   ]

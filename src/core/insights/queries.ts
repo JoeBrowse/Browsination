@@ -6,7 +6,7 @@ import { addDays, localDayOf, type LocalDay } from '../time/localDay'
 import { groupMean, groupSum, mean, pairMaps, pearson, type Correlation, type Pair } from './stats'
 
 /** Log types the insights read. Modules own the writes; this is the read side of the shared spine. */
-export const T = { drink: 'drink', sleep: 'sleep', mood: 'mood', meditation: 'meditation', practice: 'practice', attempt: 'routine_attempt', result: 'match_result', workout: 'workout', focus: 'focus', morningAfter: 'morning_after' } as const
+export const T = { drink: 'drink', sleep: 'sleep', mood: 'mood', meditation: 'meditation', practice: 'practice', attempt: 'routine_attempt', result: 'match_result', focus: 'focus', morningAfter: 'morning_after' } as const
 
 export interface PeriodSummary {
   tasksDone: number
@@ -15,7 +15,6 @@ export interface PeriodSummary {
   meditationMin: number
   practiceMin: number
   focusMin: number
-  workouts: number
   moodAvg: number | null
   sleepAvg: number | null
 }
@@ -56,9 +55,6 @@ export async function loadInsights(db: SqlDriver, dayStartHour: number, today: L
   const hoursByDay = groupMean(rows(T.sleep, (e) => num(e)))
   const moodByDay = groupMean(rows(T.mood, (e) => num(e)))
   const resultByDay = (module: string) => groupMean(of(T.result).filter((e) => e.module === module).flatMap((e) => { const v = num(e); return v === null ? [] : [{ key: dayOf(e), value: v }] }))
-  const workoutDays = new Set(of(T.workout).map(dayOf))
-  const workoutsByWeek = groupSum([...workoutDays].map((d) => ({ key: weekStart(d), value: 1 })))
-  const moodByWeek = groupMean(rows(T.mood, (e) => num(e)).map((r) => ({ key: weekStart(r.key), value: r.value })))
 
   // practice frequency vs routine score: per routine and week, attempts that week against the mean score
   // normalised by the routine's own mean, so different routines can share one chart.
@@ -81,7 +77,6 @@ export async function loadInsights(db: SqlDriver, dayStartHour: number, today: L
     card('mood-chess', 'Mood and chess results', 'mood 1-5', 'result (1 win, ½ draw, 0 loss)', pairMaps(moodByDay, resultByDay('chess'))),
     card('mood-snooker', 'Mood and snooker results', 'mood 1-5', 'result', pairMaps(moodByDay, resultByDay('snooker'))),
     card('practice-scores', 'Practice frequency and routine scores', 'attempts in a week', 'score against the routine average', practicePairs),
-    card('gym-mood', 'Gym consistency and mood', 'workout days in a week', 'average mood that week', pairMaps(workoutsByWeek, moodByWeek)),
   ]
 
   const tasks = taskQueries(db)
@@ -99,7 +94,6 @@ export async function loadInsights(db: SqlDriver, dayStartHour: number, today: L
       meditationMin: sumOf(T.meditation),
       practiceMin: sumOf(T.practice),
       focusMin: sumOf(T.focus),
-      workouts: new Set(pick(T.workout).map(dayOf)).size,
       moodAvg: mean(pick(T.mood).flatMap((e) => (num(e) === null ? [] : [num(e)!]))),
       sleepAvg: mean(pick(T.sleep).flatMap((e) => (num(e) === null ? [] : [num(e)!]))),
     }
