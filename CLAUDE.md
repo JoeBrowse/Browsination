@@ -12,7 +12,7 @@ Personal life manager for one user (Joe). React + TypeScript + Vite, packaged fo
 | `npm run build` | Production web build into `dist/` |
 | `npm run apk` | build + `cap sync android` + `gradlew assembleDebug` (needs Android SDK + JDK 21 locally) |
 
-CI (`.github/workflows/ci.yml`): `check` on every push/PR; `apk` on push to `main` and on `stage-*` tags. Tag builds attach the APK to a GitHub Release.
+CI (`.github/workflows/ci.yml`): `check` on every push/PR; `apk` on push to `main`. The first main build after the `STAGE` file changes creates the `stage-<STAGE>` tag and a GitHub Release with the APK.
 
 ## Layout
 

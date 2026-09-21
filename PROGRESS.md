@@ -14,7 +14,7 @@
 | 7 Money, app lock | done | `stage-7` | accounts with dated balances and net worth, holdings, goals linked from trips and gifts, cards with utilisation and payment reminders, credit score history, monthly check-in, PIN/biometric lock |
 | 8 Work, side projects | done | `stage-8` | projects with next actions as items and key dates, work contacts with 1:1 notes, progression (goals, skills, milestones) with an evidence log, learning list |
 | 9 Weekly review, focus, insights | done | `stage-9` | six-step resumable review with reminder and week-ahead from every module, focus timer logging `focus` entries, Insights with period summaries and six correlations |
-| 10 Iron Log merge | | | |
+| 10 Iron Log merge | withdrawn | `stage-final` | built and merged as PR #12, then removed by PR #13 the same morning: Joe decided Iron Log stays a separate app. The final build has no Gym module |
 | 11 Sync (only if asked) | | | |
 
 ## Stage 0: what was built
@@ -137,10 +137,17 @@ Deferred from Stage 8: nothing in scope.
 
 - Weekly review (`/review`, core, not a module): six steps, each saved as it happens so it resumes (`reviews` row per Monday-dated week): Inbox triage, Waiting-on, Week ahead (tasks due plus every module's `week` hook: birthdays, trips, date nights, admin due, chess calendar events, tournaments and entry deadlines, league fixtures for chess and snooker, project key dates, milestones, card payments, the money check-in), Consistency glance (every module's `consistency` hook: mood, meditation, stretch and habits as x of 7; banjo and snooker practice; alcohol units against 14 and drink-free days), Priorities (pick up to three open items or type new ones), Done (notes, finish). Due from the review day and time (default Sunday 18:00) until that week's review is completed: a Today card, a timed reminder (switchable), and a "This week" section on Today listing the chosen priorities while they are open.
 - Focus timer: from any item's sheet ("Focus"): 15/25/45/60 minutes (default in Settings), a bar above the tab bar everywhere with the countdown and Stop, an end-of-session notification (switchable; kept in step by the notification sync), and a `focus` log entry (start and end instants, minutes, linked item) when stopped. Survives an app restart.
-- Insights screen replaces the placeholder: this week and this month against the period before (tasks done, units, drink-free days, meditation, practice and focus minutes, workouts, mood and sleep averages), then six correlations over the last 90 days with the number of pairs, Pearson r, plain wording that calls out small samples, and a scatter: drinks the day before vs sleep quality, hours slept vs mood, mood vs chess results, mood vs snooker results, weekly practice attempts vs routine scores (normalised per routine), weekly workout days vs mood (fills in once Stage 10 writes `workout` entries). Labelled as correlation, never cause.
+- Insights screen replaces the placeholder: this week and this month against the period before (tasks done, units, drink-free days, meditation, practice and focus minutes, workouts, mood and sleep averages), then six correlations over the last 90 days with the number of pairs, Pearson r, plain wording that calls out small samples, and a scatter: drinks the day before vs sleep quality, hours slept vs mood, mood vs chess results, mood vs snooker results, weekly practice attempts vs routine scores (normalised per routine), Labelled as correlation, never cause.
 - Migration 0010 (`reviews`); golden export v10. New module hooks: `week`, `consistency`.
 
 Deferred from Stage 9: nothing in scope.
+
+## Stage 10: Iron Log stays separate
+
+- The port was built and merged as PR #12 (a `fitness` module with the exercise database and programme presets extracted from Iron Log as data, per-set tick boxes, backdating, readiness, bodyweight and activities; an Iron Log backup importer with dry run and snapshot; migration 0011; `docs/IRONLOG_MIGRATION.md`). Joe then asked to keep Iron Log separate, so PR #13 reverted the merge the same morning. Nothing of it remains in the app; commit `2d18f07` holds all of it should the decision ever change.
+- The `stage-10` release, if CI produced one before the revert, is the only build that carried the Gym module and schema 11. The final build is `stage-final` (schema 10). A device that ran `stage-10` still boots on later builds: the migration runner ignores versions it does not know and the extra tables sit unused; only an export made by that build would be refused later ("file needs schema 11").
+- Insights lost its two gym lines (the "Workouts" summary row and the gym-vs-mood correlation): nothing in this app writes `workout` entries. Iron Log's own history stays in Iron Log.
+- The Iron Log repositories were only read, never changed.
 
 ## Device checklist (run after installing a stage build)
 
