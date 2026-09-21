@@ -6,6 +6,7 @@ import { minutesLabel } from '@/core/ui/format'
 import { Button, SectionTitle } from '@/core/ui/primitives'
 import { Sheet } from '@/core/ui/Sheet'
 import { useQuery } from '@/core/ui/useQuery'
+import { usePlan } from './learning/usePlan'
 import { elapsedLabel, usePracticeTimer } from './timerStore'
 import { useBanjoRepo, usePracticeStats } from './useBanjo'
 
@@ -13,6 +14,7 @@ import { useBanjoRepo, usePracticeStats } from './useBanjo'
 export function PracticePanel() {
   const repo = useBanjoRepo()
   const stats = usePracticeStats()
+  const plan = usePlan()
   const startedAt = usePracticeTimer((t) => t.startedAt)
   const start = usePracticeTimer((t) => t.start)
   const stop = usePracticeTimer((t) => t.stop)
@@ -42,6 +44,17 @@ export function PracticePanel() {
           </Button>
         )}
       </div>
+      {plan.data && (plan.data.dueCount > 0 || plan.data.plan.learn) ? (
+        <div className="row" style={{ minHeight: 36 }}>
+          <span className="grow muted small">
+            {plan.data.dueCount ? `${plan.data.dueCount} due` : 'Nothing due'}
+            {plan.data.plan.learn ? ` · learn ${plan.data.plan.learn.piece.title}` : ''}
+          </span>
+          <Link to="/m/banjo/plan" className="btn">
+            Plan
+          </Link>
+        </div>
+      ) : null}
       <FinishSheet minutes={finishing} onClose={() => setFinishing(null)} lastWorkedOn={String(d?.last?.payload.worked_on ?? '')} onSave={async (minutes, worked_on, pieceId) => {
         await repo.logPractice({ minutes, worked_on, piece_id: pieceId })
         toast(`Practice ${minutesLabel(minutes)}`)

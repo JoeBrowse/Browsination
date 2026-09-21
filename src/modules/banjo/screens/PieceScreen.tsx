@@ -7,6 +7,8 @@ import { newId } from '@/core/ids'
 import { bytesToBase64 } from '@/core/platform/fileStore'
 import { Button, Card, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
+import { chunkStage, percent, pieceProgress } from '../learning/logic'
+import { formatDay } from '@/core/time/localDay'
 import { STATUSES, type PieceStatus } from '../repo'
 import { useBanjoRepo } from '../useBanjo'
 
@@ -19,7 +21,7 @@ export function PieceScreen() {
   const repo = useBanjoRepo()
   const navigate = useNavigate()
   const [busy, setBusy] = useState(false)
-  const q = useQuery(async () => ({ piece: await repo.piece(id), files: await repo.pieceFiles(id) }), ['banjo_pieces', 'files'], [id])
+  const q = useQuery(async () => ({ piece: await repo.piece(id), files: await repo.pieceFiles(id), chunks: await repo.chunks(id) }), ['banjo_pieces', 'files', 'banjo_chunks'], [id])
   const p = q.data?.piece
   if (!p) return <Screen title="Piece">{q.loading ? null : <div className="empty">Not found</div>}</Screen>
   const update = (patch: Parameters<typeof repo.updatePiece>[1]) => void repo.updatePiece(p.id, patch)
@@ -53,7 +55,44 @@ export function PieceScreen() {
           <input aria-label="Tuning" placeholder="Tuning (e.g. gDGBD)" defaultValue={p.tuning} onBlur={(e) => update({ tuning: e.target.value })} />
           <Chips label="Piece status" value={p.status} onChange={(v) => update({ status: v as PieceStatus })} options={STATUSES.map((st) => ({ label: st.label, value: st.key as PieceStatus }))} />
           <textarea aria-label="Piece notes" placeholder="Notes" defaultValue={p.notes} onBlur={(e) => update({ notes: e.target.value })} />
+          <div className="row" style={{ minHeight: 40 }}>
+            <span className="grow small muted">Bars in the score</span>
+            <input type="number" inputMode="numeric" min={1} aria-label="Bars" style={{ width: 90 }} defaultValue={p.bars ?? ''} onBlur={(e) => update({ bars: Number(e.target.value) > 0 ? Math.round(Number(e.target.value)) : null })} />
+          </div>
         </div>
+      </Card>
+      <SectionTitle>Learning</SectionTitle>
+      <Card>
+        {(() => {
+          const pr = pieceProgress(p, q.data?.chunks ?? [])
+          return (
+            <>
+              <div className="kv">
+                <span>{p.bars ? `${pr.learned} of ${p.bars} bars` : `${pr.learned} bars`}</span>
+                <span className="pill accent">{p.bars ? percent(pr.learnedFraction) : '–'}</span>
+              </div>
+              {p.bars ? (
+                <div className="progress" aria-label={`${percent(pr.learnedFraction)} learned`}>
+                  <div style={{ width: `${(pr.learnedFraction ?? 0) * 100}%` }} />
+                </div>
+              ) : null}
+              {pr.solid ? <div className="muted small">{pr.solid} bars solid · {percent(pr.solidFraction)}</div> : null}
+            </>
+          )
+        })()}
+        <div className="list" style={{ marginTop: 6 }}>
+          {(q.data?.chunks ?? []).map((c) => (
+            <div key={c.id} className="list-row" style={{ minHeight: 40 }}>
+              <span className="grow">
+                bars {c.from_bar}–{c.to_bar} <span className="muted small">{chunkStage(c)} · next {formatDay(c.due)}{c.lapses ? ` · slipped ${c.lapses}×` : ''}</span>
+              </span>
+              <Button ariaLabel={`Remove chunk ${c.from_bar}-${c.to_bar}`} onClick={() => void repo.removeChunk(c.id)}>
+                ×
+              </Button>
+            </div>
+          ))}
+        </div>
+        {(q.data?.chunks ?? []).length ? <Button onClick={() => void repo.resetLearning(p.id)}>Reset learning</Button> : null}
       </Card>
       <SectionTitle>Sheet music</SectionTitle>
       <div className="list">

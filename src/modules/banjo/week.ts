@@ -1,7 +1,7 @@
 import { consistency, daysWith } from '@/core/consistency/consistency'
 import type { ConsistencyLine, TodayContext } from '@/core/modules/types'
 import { settingsRepo } from '@/core/repos/settings'
-import { banjoRepo } from './repo'
+import { banjoRepo, LOG } from './repo'
 
 export async function banjoConsistency(ctx: TodayContext): Promise<ConsistencyLine[]> {
   const repo = banjoRepo(ctx.db)
@@ -10,5 +10,9 @@ export async function banjoConsistency(ctx: TodayContext): Promise<ConsistencyLi
   const weekAgo = new Date(ctx.now.getTime() - 7 * 86_400_000).toISOString()
   const c = consistency(daysWith(await repo.practiceStamps(since), dayStartHour), ctx.today, 7)
   const minutes = await repo.minutesSince(weekAgo)
-  return [{ label: 'Practice', value: `${c.hit} of 7 · ${Math.round(minutes)} min` }]
+  const reviews = consistency(daysWith(await repo.logs.stampsOfType(LOG.review, since), dayStartHour), ctx.today, 7)
+  return [
+    { label: 'Practice', value: `${c.hit} of 7 · ${Math.round(minutes)} min` },
+    { label: 'Reviews', value: `${reviews.hit} of 7` },
+  ]
 }

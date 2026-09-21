@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { Chips } from '@/app/tasks/fields'
 import { Button, EmptyState, Screen } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
+import { percent } from '../learning/logic'
 import { STATUSES, type PieceStatus } from '../repo'
 import { useBanjoRepo } from '../useBanjo'
 
@@ -36,7 +37,7 @@ export function LibraryScreen() {
           <Link key={p.id} to={`piece/${p.id}`} className="list-row">
             <div className="grow">
               <div className="title">{p.title}</div>
-              <div className="sub">{[p.tuning || null, STATUSES.find((s) => s.key === p.status)?.label].filter(Boolean).join(' · ')}</div>
+              <div className="sub">{[p.tuning || null, STATUSES.find((s) => s.key === p.status)?.label, p.bars ? `${percent(Math.min(1, p.learned_bars / p.bars))} of ${p.bars} bars` : null].filter(Boolean).join(' · ')}</div>
             </div>
           </Link>
         ))}

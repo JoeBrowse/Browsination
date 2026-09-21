@@ -1,0 +1,961 @@
+{
+ "format": "browsination",
+ "formatVersion": 1,
+ "schemaVersion": 11,
+ "exportedAt": "2026-01-01T00:00:00.000Z",
+ "appVersion": "golden",
+ "tables": {
+  "settings": [
+   {
+    "key": "theme",
+    "value": "\"dark\"",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "people": [
+   {
+    "id": "p-1",
+    "name": "Sophie",
+    "relationship": "partner",
+    "birthday": "--05-14",
+    "notes": "Likes plants",
+    "last_contacted_at": "2026-09-20T10:00:00.000Z",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "keep_in_touch_days": null,
+    "context": "personal",
+    "role": "",
+    "cares_about": ""
+   },
+   {
+    "id": "p-2",
+    "name": "Priya",
+    "relationship": "",
+    "birthday": null,
+    "notes": "",
+    "last_contacted_at": null,
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z",
+    "keep_in_touch_days": null,
+    "context": "work",
+    "role": "Line manager",
+    "cares_about": "Delivery dates, clear updates"
+   }
+  ],
+  "gift_ideas": [
+   {
+    "id": "g-1",
+    "person_id": "p-1",
+    "title": "Monstera",
+    "notes": "",
+    "status": "idea",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "budget_pence": null,
+    "goal_id": null
+   },
+   {
+    "id": "g-2",
+    "person_id": "p-1",
+    "title": "Weekend away",
+    "notes": "",
+    "status": "idea",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z",
+    "budget_pence": 15000,
+    "goal_id": "sg-1"
+   }
+  ],
+  "items": [
+   {
+    "id": "i-1",
+    "title": "Book dentist",
+    "notes": "Ask about the crown",
+    "module": null,
+    "status": "inbox",
+    "due_date": "2026-09-25",
+    "due_time": "09:30",
+    "reminder_at": "2026-09-25T09:00",
+    "recurrence": "FREQ=MONTHLY;INTERVAL=6",
+    "priority": 2,
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": null,
+    "chase_date": null,
+    "focus_date": null,
+    "series_id": null,
+    "recur_from": "due"
+   },
+   {
+    "id": "i-2",
+    "title": "Chase plumber quote",
+    "notes": "",
+    "module": "life",
+    "status": "waiting",
+    "due_date": null,
+    "due_time": null,
+    "reminder_at": null,
+    "recurrence": "FREQ=WEEKLY;BYDAY=MO",
+    "priority": 1,
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": "p-1",
+    "chase_date": "2026-09-28",
+    "focus_date": "2026-09-21",
+    "series_id": "i-2",
+    "recur_from": "done"
+   },
+   {
+    "id": "i-3",
+    "title": "Standing lamp",
+    "notes": "",
+    "module": "life",
+    "status": "todo",
+    "due_date": null,
+    "due_time": null,
+    "reminder_at": null,
+    "recurrence": null,
+    "priority": 0,
+    "entity_type": "life.list",
+    "entity_id": "buy",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": null,
+    "chase_date": null,
+    "focus_date": null,
+    "series_id": null,
+    "recur_from": "due"
+   },
+   {
+    "id": "i-4",
+    "title": "Draft report summary",
+    "notes": "",
+    "module": "work",
+    "status": "todo",
+    "due_date": "2026-10-15",
+    "due_time": null,
+    "reminder_at": null,
+    "recurrence": null,
+    "priority": 0,
+    "entity_type": "work.project",
+    "entity_id": "pr-1",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z",
+    "completed_at": null,
+    "waiting_person_id": null,
+    "chase_date": null,
+    "focus_date": null,
+    "series_id": null,
+    "recur_from": "due"
+   }
+  ],
+  "log_entries": [
+   {
+    "id": "l-1",
+    "type": "mood",
+    "module": "brain",
+    "ts": "2026-09-20T10:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 4,
+    "unit": "score",
+    "payload": "{\"note\":\"good sleep\"}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   },
+   {
+    "id": "l-2",
+    "type": "habit",
+    "module": "brain",
+    "ts": "2026-09-21T09:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 1,
+    "unit": null,
+    "payload": "{}",
+    "entity_type": "brain.habit",
+    "entity_id": "h-1",
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z"
+   },
+   {
+    "id": "l-3",
+    "type": "practice",
+    "module": "banjo",
+    "ts": "2026-09-24T18:00:00.000Z",
+    "ts_end": "2026-09-24T18:25:00.000Z",
+    "tz_offset_min": 60,
+    "value": 25,
+    "unit": "min",
+    "payload": "{\"worked_on\":\"rolls\",\"piece_id\":\"bp-1\"}",
+    "entity_type": "banjo.piece",
+    "entity_id": "bp-1",
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z"
+   },
+   {
+    "id": "l-4",
+    "type": "routine_attempt",
+    "module": "snooker",
+    "ts": "2026-09-24T19:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 42,
+    "unit": "score",
+    "payload": "{}",
+    "entity_type": "snooker.routine",
+    "entity_id": "sr-1",
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z"
+   },
+   {
+    "id": "l-5",
+    "type": "break",
+    "module": "snooker",
+    "ts": "2026-09-24T19:30:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 31,
+    "unit": "points",
+    "payload": "{}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z"
+   },
+   {
+    "id": "l-6",
+    "type": "drink",
+    "module": "alcohol",
+    "ts": "2026-09-25T19:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 20.2,
+    "unit": "g",
+    "payload": "{\"units\":2.56,\"volume_ml\":568,\"abv\":4.5,\"preset\":\"pint\",\"name\":\"Pint 4.5%\"}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-25T09:00:00.000Z",
+    "updated_at": "2026-09-25T09:00:00.000Z"
+   },
+   {
+    "id": "l-7",
+    "type": "caffeine",
+    "module": "alcohol",
+    "ts": "2026-09-25T08:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 95,
+    "unit": "mg",
+    "payload": "{\"preset\":\"coffee\",\"name\":\"Coffee\"}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-25T09:00:00.000Z",
+    "updated_at": "2026-09-25T09:00:00.000Z"
+   },
+   {
+    "id": "l-8",
+    "type": "medication",
+    "module": "alcohol",
+    "ts": "2026-09-25T08:05:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 1,
+    "unit": null,
+    "payload": "{\"name\":\"Vitamin D\",\"dose\":\"1000 IU\"}",
+    "entity_type": "alcohol.medication",
+    "entity_id": "md-1",
+    "created_at": "2026-09-25T09:00:00.000Z",
+    "updated_at": "2026-09-25T09:00:00.000Z"
+   },
+   {
+    "id": "l-9",
+    "type": "morning_after",
+    "module": "alcohol",
+    "ts": "2026-09-26T08:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 3,
+    "unit": "score",
+    "payload": "{\"units_previous_day\":2.56}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-25T09:00:00.000Z",
+    "updated_at": "2026-09-25T09:00:00.000Z"
+   },
+   {
+    "id": "l-10",
+    "type": "money_checkin",
+    "module": "money",
+    "ts": "2026-09-01T18:00:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 1319340,
+    "unit": "pence",
+    "payload": "{\"accounts\":4}",
+    "entity_type": null,
+    "entity_id": null,
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "l-11",
+    "type": "focus",
+    "module": "work",
+    "ts": "2026-10-02T09:00:00.000Z",
+    "ts_end": "2026-10-02T09:25:00.000Z",
+    "tz_offset_min": 60,
+    "value": 25,
+    "unit": "min",
+    "payload": "{\"title\":\"Draft report summary\"}",
+    "entity_type": "item",
+    "entity_id": "i-4",
+    "created_at": "2026-10-04T18:00:00.000Z",
+    "updated_at": "2026-10-04T18:00:00.000Z"
+   },
+   {
+    "id": "l-20",
+    "type": "learn",
+    "module": "banjo",
+    "ts": "2026-10-09T18:30:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 4,
+    "unit": "bars",
+    "payload": "{\"from_bar\":5,\"to_bar\":8,\"piece_id\":\"bp-2\"}",
+    "entity_type": "banjo.piece",
+    "entity_id": "bp-2",
+    "created_at": "2026-10-08T18:00:00.000Z",
+    "updated_at": "2026-10-08T18:00:00.000Z"
+   },
+   {
+    "id": "l-21",
+    "type": "review",
+    "module": "banjo",
+    "ts": "2026-10-09T18:10:00.000Z",
+    "ts_end": null,
+    "tz_offset_min": 60,
+    "value": 3,
+    "unit": "quality",
+    "payload": "{\"piece_id\":\"bp-2\",\"from_bar\":1,\"to_bar\":4,\"interval_before\":1,\"interval_after\":3}",
+    "entity_type": "banjo.chunk",
+    "entity_id": "bc-1",
+    "created_at": "2026-10-08T18:00:00.000Z",
+    "updated_at": "2026-10-08T18:00:00.000Z"
+   }
+  ],
+  "files": [
+   {
+    "id": "f-1",
+    "module": "banjo",
+    "entity_type": "banjo.piece",
+    "entity_id": "piece-1",
+    "rel_path": "files/banjo/f-1.pdf",
+    "mime": "application/pdf",
+    "title": "Cripple Creek",
+    "created_at": "2026-09-20T10:00:00.000Z",
+    "updated_at": "2026-09-20T10:00:00.000Z"
+   }
+  ],
+  "habits": [
+   {
+    "id": "h-1",
+    "name": "Read",
+    "target_per_week": 5,
+    "sort_order": 0,
+    "archived_at": null,
+    "created_at": "2026-09-21T09:00:00.000Z",
+    "updated_at": "2026-09-21T09:00:00.000Z"
+   }
+  ],
+  "buy_details": [
+   {
+    "item_id": "i-3",
+    "price_pence": 4599,
+    "url": "https://example.com/lamp",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "date_nights": [
+   {
+    "id": "d-1",
+    "title": "Jazz night",
+    "status": "planned",
+    "date": "2026-10-03",
+    "place": "Cardiff",
+    "budget_pence": 6000,
+    "spent_pence": null,
+    "notes": "",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "trips": [
+   {
+    "id": "t-1",
+    "name": "Lisbon",
+    "destination": "Lisbon, PT",
+    "start_date": "2026-11-10",
+    "end_date": "2026-11-14",
+    "budget_pence": 80000,
+    "spent_pence": 21000,
+    "booking_refs": "[{\"label\":\"Hotel\",\"ref\":\"ABC123\"}]",
+    "notes": "",
+    "status": "planned",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z",
+    "goal_id": null
+   },
+   {
+    "id": "t-2",
+    "name": "Japan",
+    "destination": "Tokyo",
+    "start_date": "2027-04-10",
+    "end_date": "2027-04-24",
+    "budget_pence": 350000,
+    "spent_pence": null,
+    "booking_refs": "[]",
+    "notes": "",
+    "status": "idea",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z",
+    "goal_id": "sg-1"
+   }
+  ],
+  "flight_prices": [
+   {
+    "id": "fp-1",
+    "trip_id": "t-1",
+    "checked_on": "2026-09-22",
+    "route": "BRS-LIS",
+    "price_pence": 9800,
+    "url": null,
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "admin_items": [
+   {
+    "id": "a-1",
+    "kind": "renewal",
+    "name": "Passport",
+    "due_date": "2029-03-01",
+    "recurrence": null,
+    "cost_pence": null,
+    "location": "Desk drawer",
+    "notes": "",
+    "last_done": null,
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   },
+   {
+    "id": "a-2",
+    "kind": "health",
+    "name": "Dentist",
+    "due_date": "2026-11-01",
+    "recurrence": "FREQ=MONTHLY;INTERVAL=6",
+    "cost_pence": null,
+    "location": "",
+    "notes": "",
+    "last_done": "2026-05-01",
+    "created_at": "2026-09-22T09:00:00.000Z",
+    "updated_at": "2026-09-22T09:00:00.000Z"
+   }
+  ],
+  "calendars": [
+   {
+    "id": "c-1",
+    "name": "Lessons",
+    "url": "https://calendar.google.com/calendar/ical/x/private-abc/basic.ics",
+    "enabled": 1,
+    "last_synced_at": "2026-09-23T09:00:00.000Z",
+    "last_error": null,
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "calendar_events": [
+   {
+    "id": "ev-1",
+    "calendar_id": "c-1",
+    "uid": "u1@google.com",
+    "summary": "Lesson: Tom",
+    "location": "Online",
+    "description": "",
+    "start_ts": "2026-09-24T16:00:00.000Z",
+    "end_ts": "2026-09-24T17:00:00.000Z",
+    "all_day": 0,
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "students": [
+   {
+    "id": "s-1",
+    "person_id": "p-1",
+    "level": "1200",
+    "goals": "Stop hanging pieces",
+    "notes": "",
+    "active": 1,
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "lesson_templates": [
+   {
+    "id": "lt-1",
+    "title": "Tactics warm-up",
+    "body": "10 puzzles, then review last game",
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "lessons": [
+   {
+    "id": "ls-1",
+    "student_id": "s-1",
+    "event_id": "ev-1",
+    "date": "2026-09-24",
+    "plan": "Endgame basics",
+    "notes_after": "",
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "repertoire": [
+   {
+    "id": "r-1",
+    "colour": "white",
+    "parent_id": null,
+    "name": "London System",
+    "pgn": "1. d4 d5 2. Bf4",
+    "notes": "",
+    "confidence": 3,
+    "last_reviewed": "2026-09-01",
+    "sort_order": 0,
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   },
+   {
+    "id": "r-2",
+    "colour": "white",
+    "parent_id": "r-1",
+    "name": "vs ...c5",
+    "pgn": "1. d4 d5 2. Bf4 c5 3. e3",
+    "notes": "Keep the bishop",
+    "confidence": 2,
+    "last_reviewed": null,
+    "sort_order": 0,
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "tournaments": [
+   {
+    "id": "tn-1",
+    "name": "Cardiff Open",
+    "start_date": "2026-11-07",
+    "end_date": "2026-11-08",
+    "location": "Cardiff",
+    "entry_deadline": "2026-10-31",
+    "entry_fee_pence": 3500,
+    "entered": "no",
+    "url": null,
+    "notes": "",
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "league_seasons": [
+   {
+    "id": "se-1",
+    "module": "chess",
+    "name": "2026/27",
+    "team": "Cardiff Crows",
+    "start_date": "2026-09-01",
+    "end_date": "2027-04-30",
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "league_fixtures": [
+   {
+    "id": "fx-1",
+    "season_id": "se-1",
+    "module": "chess",
+    "date": "2026-09-22",
+    "opponent": "A. Jones",
+    "opponent_team": "Newport",
+    "board": 3,
+    "colour": "white",
+    "result": 1,
+    "my_rating": 1650,
+    "opponent_rating": 1600,
+    "pgn": "",
+    "notes": "",
+    "created_at": "2026-09-23T09:00:00.000Z",
+    "updated_at": "2026-09-23T09:00:00.000Z"
+   }
+  ],
+  "banjo_pieces": [
+   {
+    "id": "bp-1",
+    "title": "Cripple Creek",
+    "tuning": "gDGBD",
+    "status": "polishing",
+    "notes": "",
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z",
+    "bars": null,
+    "learned_bars": 0
+   },
+   {
+    "id": "bp-2",
+    "title": "Salt Creek",
+    "tuning": "gDGBD",
+    "status": "learning",
+    "notes": "",
+    "created_at": "2026-10-08T18:00:00.000Z",
+    "updated_at": "2026-10-08T18:00:00.000Z",
+    "bars": 32,
+    "learned_bars": 8
+   }
+  ],
+  "banjo_goals": [
+   {
+    "id": "bg-1",
+    "title": "Foggy Mountain Breakdown",
+    "kind": "piece",
+    "target_date": "2026-12-31",
+    "status": "active",
+    "notes": "",
+    "piece_id": "bp-1",
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z"
+   }
+  ],
+  "snooker_routines": [
+   {
+    "id": "sr-1",
+    "name": "Line-up",
+    "description": "Colours on spots, reds in a line",
+    "unit": "score",
+    "sort_order": 0,
+    "archived_at": null,
+    "created_at": "2026-09-24T09:00:00.000Z",
+    "updated_at": "2026-09-24T09:00:00.000Z"
+   }
+  ],
+  "medications": [
+   {
+    "id": "md-1",
+    "name": "Vitamin D",
+    "dose": "1000 IU",
+    "times": "[\"08:00\"]",
+    "active": 1,
+    "notes": "",
+    "created_at": "2026-09-25T09:00:00.000Z",
+    "updated_at": "2026-09-25T09:00:00.000Z"
+   }
+  ],
+  "accounts": [
+   {
+    "id": "ac-1",
+    "name": "Current",
+    "kind": "current",
+    "provider": "Monzo",
+    "credit_limit_pence": null,
+    "payment_due_day": null,
+    "payment_reminder": 1,
+    "archived": 0,
+    "sort_order": 0,
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "ac-2",
+    "name": "Rainy day",
+    "kind": "savings",
+    "provider": "",
+    "credit_limit_pence": null,
+    "payment_due_day": null,
+    "payment_reminder": 1,
+    "archived": 0,
+    "sort_order": 1,
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "ac-3",
+    "name": "ISA",
+    "kind": "isa",
+    "provider": "Vanguard",
+    "credit_limit_pence": null,
+    "payment_due_day": null,
+    "payment_reminder": 1,
+    "archived": 0,
+    "sort_order": 2,
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "ac-4",
+    "name": "Credit card",
+    "kind": "credit",
+    "provider": "",
+    "credit_limit_pence": 250000,
+    "payment_due_day": 14,
+    "payment_reminder": 1,
+    "archived": 0,
+    "sort_order": 3,
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   }
+  ],
+  "balance_snapshots": [
+   {
+    "id": "bs-1",
+    "account_id": "ac-1",
+    "day": "2026-08-01",
+    "balance_pence": 120000,
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "bs-2",
+    "account_id": "ac-1",
+    "day": "2026-09-01",
+    "balance_pence": 150000,
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "bs-3",
+    "account_id": "ac-2",
+    "day": "2026-09-01",
+    "balance_pence": 400000,
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "bs-4",
+    "account_id": "ac-3",
+    "day": "2026-09-01",
+    "balance_pence": 812550,
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   },
+   {
+    "id": "bs-5",
+    "account_id": "ac-4",
+    "day": "2026-09-01",
+    "balance_pence": 43210,
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   }
+  ],
+  "holdings": [
+   {
+    "id": "h-1",
+    "account_id": "ac-3",
+    "ticker": "VWRP",
+    "name": "FTSE All-World",
+    "quantity": 62.5,
+    "cost_pence": 600000,
+    "price_pence": 10520,
+    "price_updated_at": "2026-09-28T09:00:00.000Z",
+    "archived": 0,
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   }
+  ],
+  "savings_goals": [
+   {
+    "id": "sg-1",
+    "name": "Japan 2027",
+    "target_pence": 350000,
+    "deadline": "2027-04-01",
+    "account_id": "ac-2",
+    "saved_pence": 0,
+    "status": "active",
+    "notes": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   }
+  ],
+  "credit_scores": [
+   {
+    "id": "cs-1",
+    "day": "2026-09-01",
+    "score": 812,
+    "agency": "experian",
+    "note": "",
+    "created_at": "2026-09-28T09:00:00.000Z",
+    "updated_at": "2026-09-28T09:00:00.000Z"
+   }
+  ],
+  "projects": [
+   {
+    "id": "pr-1",
+    "name": "Bridge inspection",
+    "client": "Council",
+    "area": "work",
+    "status": "active",
+    "key_dates": "[{\"label\":\"Report due\",\"date\":\"2026-10-20\"}]",
+    "notes": "",
+    "sort_order": 0,
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   },
+   {
+    "id": "pr-2",
+    "name": "Browsination",
+    "client": "",
+    "area": "side",
+    "status": "active",
+    "key_dates": "[]",
+    "notes": "Personal app",
+    "sort_order": 1,
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   }
+  ],
+  "one_on_ones": [
+   {
+    "id": "oo-1",
+    "person_id": "p-2",
+    "day": "2026-10-01",
+    "notes": "Asked for chartership support",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   }
+  ],
+  "progression_items": [
+   {
+    "id": "pg-1",
+    "kind": "goal",
+    "title": "Lead a project end to end",
+    "status": "active",
+    "target_date": "2027-03-31",
+    "done_date": null,
+    "notes": "",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   },
+   {
+    "id": "pg-2",
+    "kind": "skill",
+    "title": "Python for data checks",
+    "status": "active",
+    "target_date": null,
+    "done_date": null,
+    "notes": "",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   },
+   {
+    "id": "pg-3",
+    "kind": "milestone",
+    "title": "Chartership application",
+    "status": "active",
+    "target_date": "2027-06-01",
+    "done_date": null,
+    "notes": "",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   }
+  ],
+  "evidence": [
+   {
+    "id": "ev-1",
+    "day": "2026-10-01",
+    "kind": "feedback",
+    "title": "Clear client update",
+    "detail": "Council praised the summary",
+    "source": "Priya",
+    "progression_id": "pg-1",
+    "project_id": "pr-1",
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   }
+  ],
+  "learning_items": [
+   {
+    "id": "le-1",
+    "title": "Designing Data-Intensive Applications",
+    "kind": "book",
+    "status": "doing",
+    "url": "",
+    "notes": "",
+    "finished_at": null,
+    "created_at": "2026-10-01T09:00:00.000Z",
+    "updated_at": "2026-10-01T09:00:00.000Z"
+   }
+  ],
+  "reviews": [
+   {
+    "id": "rv-1",
+    "week": "2026-10-05",
+    "step": 5,
+    "priorities": "[\"i-4\"]",
+    "notes": "Report week",
+    "started_at": "2026-10-04T18:00:00.000Z",
+    "completed_at": "2026-10-04T18:12:00.000Z",
+    "created_at": "2026-10-04T18:00:00.000Z",
+    "updated_at": "2026-10-04T18:00:00.000Z"
+   }
+  ],
+  "banjo_chunks": [
+   {
+    "id": "bc-1",
+    "piece_id": "bp-2",
+    "from_bar": 1,
+    "to_bar": 4,
+    "due": "2026-10-12",
+    "interval_days": 3,
+    "ease": 2.55,
+    "reps": 1,
+    "lapses": 0,
+    "last_reviewed": "2026-10-09",
+    "last_quality": 3,
+    "created_at": "2026-10-08T18:00:00.000Z",
+    "updated_at": "2026-10-08T18:00:00.000Z"
+   },
+   {
+    "id": "bc-2",
+    "piece_id": "bp-2",
+    "from_bar": 5,
+    "to_bar": 8,
+    "due": "2026-10-10",
+    "interval_days": 1,
+    "ease": 2.5,
+    "reps": 0,
+    "lapses": 0,
+    "last_reviewed": null,
+    "last_quality": null,
+    "created_at": "2026-10-08T18:00:00.000Z",
+    "updated_at": "2026-10-08T18:00:00.000Z"
+   }
+  ]
+ }
+}

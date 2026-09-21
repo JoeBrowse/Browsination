@@ -8,6 +8,8 @@ import { Button, Card, EmptyState, Screen, SectionTitle } from '@/core/ui/primit
 import { useQuery } from '@/core/ui/useQuery'
 import { useServices } from '@/app/services'
 import { toast } from '@/app/shellStore'
+import { percent } from '../learning/logic'
+import { usePlan } from '../learning/usePlan'
 import { FinishSheet } from '../PracticePanel'
 import { useBanjoRepo, usePracticeStats } from '../useBanjo'
 
@@ -24,7 +26,9 @@ export function BanjoScreen() {
   }, ['log_entries', 'settings'])
   const sessions = useQuery(() => repo.sessions(20), ['log_entries'])
   const goals = useQuery(() => repo.goals('active'), ['banjo_goals'])
+  const plan = usePlan()
   const d = stats.data
+  const learning = (plan.data?.pieces ?? []).filter((p) => p.bars && p.status !== 'performance-ready')
   return (
     <Screen title="Banjo" right={<Button onClick={() => setLogging(20)}>Log</Button>}>
       <Card>
@@ -44,6 +48,9 @@ export function BanjoScreen() {
       <SectionTitle>12 weeks</SectionTitle>
       {heat.data ? <Heatmap weeks={heat.data} label="Practice last 12 weeks" /> : null}
       <div className="tray" style={{ marginTop: 14 }}>
+        <Link to="plan" className="tile">
+          <span className="label">Plan{plan.data?.dueCount ? ` ${plan.data.dueCount}` : ''}</span>
+        </Link>
         <Link to="library" className="tile">
           <span className="label">Library</span>
         </Link>
@@ -54,6 +61,30 @@ export function BanjoScreen() {
           <span className="label">Sessions</span>
         </Link>
       </div>
+      {learning.length ? (
+        <>
+          <SectionTitle>Learning</SectionTitle>
+          <div className="list">
+            {learning.map((p) => {
+              const pr = plan.data!.progress.get(p.id)!
+              return (
+                <Link key={p.id} to={`library/piece/${p.id}`} className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 4 }}>
+                  <div className="kv" style={{ minHeight: 28 }}>
+                    <span className="title">{p.title}</span>
+                    <span className="muted small">
+                      {pr.learned} of {pr.bars} bars · {percent(pr.learnedFraction)}
+                      {pr.solid ? ` · ${percent(pr.solidFraction)} solid` : ''}
+                    </span>
+                  </div>
+                  <div className="progress" aria-label={`${percent(pr.learnedFraction)} learned`}>
+                    <div style={{ width: `${(pr.learnedFraction ?? 0) * 100}%` }} />
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        </>
+      ) : null}
       <SectionTitle>Recent</SectionTitle>
       {sessions.data && sessions.data.length === 0 ? <EmptyState>No sessions yet</EmptyState> : null}
       <div className="list">

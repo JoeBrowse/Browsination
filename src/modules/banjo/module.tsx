@@ -1,12 +1,15 @@
 import { Music } from 'lucide-react'
 import { lazy, Suspense } from 'react'
 import type { ModuleDef } from '@/core/modules/types'
+import { BanjoSettings } from './BanjoSettings'
 import { PracticePanel } from './PracticePanel'
 import { BanjoScreen } from './screens/BanjoScreen'
 import { GoalsScreen } from './screens/GoalsScreen'
 import { LibraryScreen } from './screens/LibraryScreen'
 import { PieceScreen } from './screens/PieceScreen'
+import { PlanScreen } from './screens/PlanScreen'
 import { SessionsScreen } from './screens/SessionsScreen'
+import { banjoDigest } from './today'
 import { banjoConsistency } from './week'
 
 const ViewerScreen = lazy(() => import('./screens/ViewerScreen').then((m) => ({ default: m.ViewerScreen })))
@@ -31,7 +34,10 @@ export const banjoModule: ModuleDef = {
       ),
     },
     { path: 'goals', element: <GoalsScreen /> },
+    { path: 'plan', element: <PlanScreen /> },
     { path: 'sessions', element: <SessionsScreen /> },
   ],
   panels: [{ key: 'banjo.practice', component: PracticePanel }],
+  digest: banjoDigest,
+  settings: BanjoSettings,
 }
