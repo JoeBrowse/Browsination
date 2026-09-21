@@ -5,6 +5,7 @@ import { AppearanceSection } from './settings/AppearanceSection'
 import { DataSection } from './settings/DataSection'
 import { LockSection } from './settings/LockSection'
 import { NotificationsSection } from './settings/NotificationsSection'
+import { ReviewSection } from './settings/ReviewSection'
 
 export function SettingsScreen() {
   const s = useServices()
@@ -14,6 +15,8 @@ export function SettingsScreen() {
       <DataSection />
       <SectionTitle>Notifications</SectionTitle>
       <NotificationsSection />
+      <SectionTitle>Review and focus</SectionTitle>
+      <ReviewSection />
       <SectionTitle>Lock</SectionTitle>
       <LockSection />
       {getModules()

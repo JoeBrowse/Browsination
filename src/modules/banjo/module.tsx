@@ -7,6 +7,7 @@ import { GoalsScreen } from './screens/GoalsScreen'
 import { LibraryScreen } from './screens/LibraryScreen'
 import { PieceScreen } from './screens/PieceScreen'
 import { SessionsScreen } from './screens/SessionsScreen'
+import { banjoConsistency } from './week'
 
 const ViewerScreen = lazy(() => import('./screens/ViewerScreen').then((m) => ({ default: m.ViewerScreen })))
 
@@ -16,6 +17,7 @@ export const banjoModule: ModuleDef = {
   icon: Music,
   accent: '#ff9f6b',
   order: 40,
+  consistency: banjoConsistency,
   routes: [
     { index: true, element: <BanjoScreen /> },
     { path: 'library', element: <LibraryScreen /> },

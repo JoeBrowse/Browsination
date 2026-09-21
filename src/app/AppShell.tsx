@@ -1,6 +1,7 @@
 import { BarChart3, Inbox, LayoutGrid, Plus, Settings, Sun } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router'
 import { QuickCapture } from './capture/QuickCapture'
+import { FocusBar } from './focus/FocusBar'
 import { useShell } from './shellStore'
 
 const TABS = [
@@ -63,6 +64,7 @@ export function AppShell({ capture = true }: { capture?: boolean }) {
       <Outlet />
       {capture ? <QuickCapture /> : null}
       <QuickCaptureSlot />
+      <FocusBar />
       <BottomNav />
       <ToastHost />
     </>

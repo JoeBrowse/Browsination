@@ -2,6 +2,8 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
+import { reviewDue } from '@/core/review/logic'
+import type * as ReviewLogic from '@/core/review/logic'
 import { fakeServices, makeItem } from '@/test/fakeServices'
 import { ToastHost } from '../AppShell'
 import { ServicesContext } from '../services'
@@ -9,6 +11,8 @@ import { TodayScreen } from './Today'
 
 // The screen is tested on its own: no real modules, so no module panels or cards.
 vi.mock('@/core/modules/registry', () => ({ getModules: () => [], modulePath: (id: string) => `/m/${id}` }))
+// The weekly review card is driven by a pure predicate; it is switched on in one test below.
+vi.mock('@/core/review/logic', async (orig) => ({ ...(await orig<typeof ReviewLogic>()), reviewDue: vi.fn(() => false) }))
 
 function renderToday(s = fakeServices()) {
   render(
@@ -62,5 +66,14 @@ describe('TodayScreen', () => {
       renderToday()
     })
     expect(screen.getByText('Clear')).toBeTruthy()
+  })
+
+  it('shows the weekly review card when the review is due', async () => {
+    vi.mocked(reviewDue).mockReturnValueOnce(true)
+    await act(async () => {
+      renderToday()
+    })
+    expect(screen.getByText('Weekly review')).toBeTruthy()
+    expect(screen.queryByText('Clear')).toBeNull()
   })
 })

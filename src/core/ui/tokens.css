@@ -166,3 +166,6 @@ button.tile { font: inherit; color: inherit; }
 .progress > div { height: 100%; background: var(--accent); }
 .big { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
 .pos { color: var(--accent); }
+
+/* Focus session bar above the tab bar */
+.focus-bar { position: fixed; left: 0; right: 0; bottom: calc(64px + var(--safe-b)); z-index: 15; display: flex; align-items: center; gap: 10px; padding: 8px var(--pad); background: var(--surface); border-top: 1px solid var(--border); }

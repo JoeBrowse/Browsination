@@ -51,6 +51,14 @@ export interface Settings {
   'work.leadDays': number
   /** Mention them in the morning digest too. */
   'work.digest': boolean
+  /** Weekly review: day of week (0 = Sunday) and time it becomes due, with an optional timed reminder. */
+  'review.day': number
+  'review.time': string
+  'review.reminder': boolean
+  /** Focus timer defaults (minutes) and the end-of-session notification. */
+  'focus.minutes': number
+  'focus.breakMinutes': number
+  'focus.endNotification': boolean
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -84,6 +92,12 @@ export const SETTINGS_DEFAULTS: Settings = {
   'lock.graceSeconds': 60,
   'work.leadDays': 7,
   'work.digest': true,
+  'review.day': 0,
+  'review.time': '18:00',
+  'review.reminder': true,
+  'focus.minutes': 25,
+  'focus.breakMinutes': 5,
+  'focus.endNotification': true,
 }
 
 export type SettingKey = keyof Settings

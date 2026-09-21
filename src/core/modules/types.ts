@@ -58,6 +58,30 @@ export interface ModuleDef {
   reminders?: (ctx: TodayContext) => Promise<ModuleReminder[]>
   /** Screens, Today cards and panels sit behind the app lock when the lock mode is 'money' (or 'app'). */
   requiresLock?: boolean
+  /** Dated things inside a range (events, deadlines, birthdays, fixtures) for the weekly review's look-ahead. */
+  week?: (ctx: WeekContext) => Promise<WeekItem[]>
+  /** One line per habit-like thing for the weekly review's consistency glance ("Practice", "5 of 7"). */
+  consistency?: (ctx: TodayContext) => Promise<ConsistencyLine[]>
+}
+
+export interface WeekContext extends TodayContext {
+  /** Inclusive civil range. */
+  from: LocalDay
+  to: LocalDay
+}
+
+export interface WeekItem {
+  key: string
+  date: LocalDay
+  title: string
+  sub?: string
+  href?: string
+}
+
+export interface ConsistencyLine {
+  label: string
+  /** "5 of 7", "3.2 units", "done". */
+  value: string
 }
 
 export interface ModuleReminder {

@@ -7,6 +7,7 @@ import { WorkPeopleScreen } from './screens/WorkPeopleScreen'
 import { WorkPersonScreen } from './screens/WorkPersonScreen'
 import { WorkScreen } from './screens/WorkScreen'
 import { workDigest, workToday } from './today'
+import { workWeek } from './week'
 import { WorkSettings } from './WorkSettings'
 
 export const workModule: ModuleDef = {
@@ -25,5 +26,6 @@ export const workModule: ModuleDef = {
   ],
   today: [workToday],
   digest: workDigest,
+  week: workWeek,
   settings: WorkSettings,
 }
