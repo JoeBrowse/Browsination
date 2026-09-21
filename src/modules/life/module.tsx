@@ -10,6 +10,7 @@ import { PersonScreen } from './screens/PersonScreen'
 import { TripScreen } from './screens/TripScreen'
 import { TripsScreen } from './screens/TripsScreen'
 import { lifeDigest, lifeToday } from './today'
+import { lifeWeek } from './week'
 
 export const lifeModule: ModuleDef = {
   id: 'life',
@@ -29,5 +30,6 @@ export const lifeModule: ModuleDef = {
   ],
   today: [lifeToday],
   digest: lifeDigest,
+  week: lifeWeek,
   settings: LifeSettings,
 }

@@ -5,6 +5,7 @@ import { AlcoholSettings } from './AlcoholSettings'
 import { AlcoholScreen } from './screens/AlcoholScreen'
 import { MedicationScreen } from './screens/MedicationScreen'
 import { medicationReminders } from './today'
+import { alcoholConsistency } from './week'
 
 export const alcoholModule: ModuleDef = {
   id: 'alcohol',
@@ -12,6 +13,7 @@ export const alcoholModule: ModuleDef = {
   icon: Wine,
   accent: '#e07a9a',
   order: 60,
+  consistency: alcoholConsistency,
   routes: [
     { index: true, element: <AlcoholScreen /> },
     { path: 'medication', element: <MedicationScreen /> },

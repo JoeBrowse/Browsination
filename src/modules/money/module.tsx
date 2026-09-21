@@ -8,6 +8,7 @@ import { GoalsScreen } from './screens/GoalsScreen'
 import { HoldingsScreen } from './screens/HoldingsScreen'
 import { MoneyScreen } from './screens/MoneyScreen'
 import { moneyDigest, moneyReminders, moneyToday } from './today'
+import { moneyWeek } from './week'
 
 export const moneyModule: ModuleDef = {
   id: 'money',
@@ -27,5 +28,6 @@ export const moneyModule: ModuleDef = {
   today: [moneyToday],
   digest: moneyDigest,
   reminders: moneyReminders,
+  week: moneyWeek,
   settings: MoneySettings,
 }

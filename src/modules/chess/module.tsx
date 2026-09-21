@@ -1,5 +1,6 @@
 import { Crown } from 'lucide-react'
 import type { ModuleDef } from '@/core/modules/types'
+import { chessWeek } from './week'
 import { startCalendarSync } from './runner'
 import { CalendarScreen } from './screens/CalendarScreen'
 import { ChessScreen } from './screens/ChessScreen'
@@ -16,6 +17,7 @@ export const chessModule: ModuleDef = {
   icon: Crown,
   accent: '#f2b84b',
   order: 30,
+  week: chessWeek,
   routes: [
     { index: true, element: <ChessScreen /> },
     { path: 'calendar', element: <CalendarScreen /> },

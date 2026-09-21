@@ -41,6 +41,9 @@ src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared vie
 src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
 src/modules/money/      Stage 7: logic.ts (net worth series, utilisation, due dates, goal progress, check-in due), repo, sheets/, screens/ (hub, account, holdings, goals, credit, check-in)
 src/modules/work/       Stage 8: projects (next actions are items with entity 'work.project'), work contacts (people.context = 'work') with 1:1 notes, progression + evidence, learning list
+src/core/review/        Stage 9: weekly review timing (Monday weeks, review day rule) and the reviews repo; screen in src/app/screens/Review.tsx with steps in src/app/review
+src/core/focus/         Stage 9: focus session store (localStorage); src/app/focus has the sheet, the bar and the hook that logs `focus` entries
+src/core/insights/      Stage 9: stats.ts (pearson, grouping, pairing) and queries.ts (period summaries + correlation cards over log_entries)
 src/core/lock/          Stage 7: pin.ts (PBKDF2 record + verify), lockStore (zustand), install.ts (boot + background re-lock), LockScreen, RequireUnlock layout route
 src/core/ui/GoalPicker  select an active savings goal from any module (trips, gifts)
 src/core/ui/format.ts   pounds/pence, sparkline path, minutes labels; MoneyInput.tsx and Sparkline.tsx next to it
@@ -56,7 +59,7 @@ src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
 - **No file over 400 lines** (ESLint `max-lines`, fails CI). Split by concern, not by line count.
 - **UI never touches SQL.** Screens call repositories; repositories call `SqlDriver`.
 - **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node. Network requests go through `platform/http.ts` (Capacitor HTTP natively, so the WebView's CORS rules do not apply).
-- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `reminders` (timed notifications the planner schedules), `settings` (Settings section), `start` (background work at boot, returns a disposer).
+- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `reminders` (timed notifications the planner schedules), `settings` (Settings section), `start` (background work at boot, returns a disposer), `week` (dated things in a range, for the weekly review), `consistency` (x-of-7 lines for the review), `requiresLock`.
 - **Alcohol module tone**: informative and neutral, positives and negatives, no lecturing, the disclaimer wherever an estimate is shown, and never any "safe to drive" indicator.
 - **Ids** are text UUIDs from `newId()`. Never integer autoincrement.
 - **Time.** Instants (things that happened) are ISO 8601 UTC strings + `tz_offset_min` captured at write. Scheduled things are civil: `due_date` `YYYY-MM-DD`, `due_time`/`reminder_at` local wall-clock. "Which day" is computed at read time with `localDayOf(ts, offset, dayStartHour)`; never store a day column.

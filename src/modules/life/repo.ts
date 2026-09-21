@@ -137,6 +137,8 @@ export function lifeRepo(db: SqlDriver) {
     bookingRefs: (t: TripRow) => parseJson<{ label: string; ref: string }[]>(t.booking_refs, []),
     checklist: (tripId: string) => items.listForEntity(TRIP_ENTITY, tripId),
     addChecklistItem: (tripId: string, title: string) => items.create({ title, module: 'life', status: 'todo', entity_type: TRIP_ENTITY, entity_id: tripId }),
+    tripsBetween: (from: LocalDay, to: LocalDay) => db.query<TripRow>(`SELECT * FROM trips WHERE status = 'planned' AND start_date IS NOT NULL AND start_date >= ? AND start_date <= ? ORDER BY start_date`, [from, to]),
+    dateNightsBetween: (from: LocalDay, to: LocalDay) => db.query<DateNightRow>(`SELECT * FROM date_nights WHERE status = 'planned' AND date >= ? AND date <= ? ORDER BY date`, [from, to]),
     upcomingTrips: (today: LocalDay, withinDays: number) =>
       db.query<TripRow>(`SELECT * FROM trips WHERE status = 'planned' AND start_date IS NOT NULL AND start_date >= ? AND start_date <= date(?, '+' || ? || ' days') ORDER BY start_date`, [today, today, withinDays]),
     flightPrices: (tripId: string) => db.query<FlightPriceRow>(`SELECT * FROM flight_prices WHERE trip_id = ? ORDER BY checked_on, created_at`, [tripId]),

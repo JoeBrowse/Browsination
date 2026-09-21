@@ -4,6 +4,7 @@ import type { ModuleDef } from '@/core/modules/types'
 import { Screen } from '@/core/ui/primitives'
 import { RoutineScreen } from './screens/RoutineScreen'
 import { SnookerScreen } from './screens/SnookerScreen'
+import { snookerConsistency, snookerWeek } from './week'
 
 function SnookerLeagueScreen() {
   return (
@@ -19,6 +20,8 @@ export const snookerModule: ModuleDef = {
   icon: Target,
   accent: '#4fd1c5',
   order: 50,
+  week: snookerWeek,
+  consistency: snookerConsistency,
   routes: [
     { index: true, element: <SnookerScreen /> },
     { path: 'routine/:id', element: <RoutineScreen /> },

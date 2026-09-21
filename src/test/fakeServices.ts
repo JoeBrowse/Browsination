@@ -1,3 +1,4 @@
+import { SETTINGS_DEFAULTS } from '@/core/settings/schema'
 import { vi } from 'vitest'
 import type { Services } from '@/app/services'
 import type { ItemRow } from '@/core/repos/items'
@@ -14,7 +15,7 @@ export function fakeServices(over: Partial<Services> = {}): Services {
     logs: {} as never,
     people: { list: vi.fn(async () => []), create: vi.fn() } as never,
     fileRows: {} as never,
-    settings: { get: vi.fn(async (k: string) => (k === 'dayStartHour' ? 4 : null)), set: vi.fn(async () => undefined), all: vi.fn() } as never,
+    settings: { get: vi.fn(async (k: string) => (k === 'dayStartHour' ? 4 : ((SETTINGS_DEFAULTS as unknown as Record<string, unknown>)[k] ?? null))), set: vi.fn(async () => undefined), all: vi.fn(async () => SETTINGS_DEFAULTS) } as never,
   }
   return { ...(base as unknown as Services), ...over }
 }

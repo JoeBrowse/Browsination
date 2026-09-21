@@ -5,6 +5,8 @@ import { isModuleLocked, useLock } from '@/core/lock/lockStore'
 import { getModules } from '@/core/modules/registry'
 import type { TodayCard } from '@/core/modules/types'
 import type { ItemRow } from '@/core/repos/items'
+import { reviewDue, weekStart } from '@/core/review/logic'
+import { reviewRepo } from '@/core/review/repo'
 import { collectToday } from '@/core/today/collect'
 import { calendarDay, formatDay, todayLocal } from '@/core/time/localDay'
 import { Button, EmptyState, ListRow, ModuleScope, Screen, SectionTitle } from '@/core/ui/primitives'
@@ -33,14 +35,21 @@ export function TodayScreen() {
       const dayStartHour = await s.settings.get('dayStartHour')
       const now = new Date()
       const today = todayLocal(now, dayStartHour)
-      const [focus, overdue, due, chase, modules] = await Promise.all([
+      const reviews = reviewRepo(s.db)
+      const [reviewDay, reviewTime, completedWeeks, thisWeek] = await Promise.all([s.settings.get('review.day'), s.settings.get('review.time'), reviews.completedWeeks(4), reviews.forWeek(weekStart(calendarToday))])
+      const nowTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
+      const extra: TodayCard[] = reviewDue(calendarToday, nowTime, reviewDay, reviewTime, completedWeeks) ? [{ key: 'core:review', module: 'core', kind: 'checkin', title: 'Weekly review', sub: 'about ten minutes', priority: 2, href: '/review' }] : []
+      const priorityIds = thisWeek ? reviews.priorityIds(thisWeek) : []
+      const [focus, overdue, due, chase, modules, priorities] = await Promise.all([
         s.tasks.focus(calendarToday),
         s.tasks.overdue(calendarToday),
         s.tasks.dueOn(calendarToday),
         s.tasks.chaseDue(calendarToday),
-        collectToday({ db: s.db, today, calendarToday, now }, unlocked, TODAY_CAP),
+        collectToday({ db: s.db, today, calendarToday, now }, unlocked, TODAY_CAP, extra),
+        Promise.all(priorityIds.map((id) => s.items.get(id))),
       ])
-      return { focus, overdue, due, chase, modules }
+      const week = priorities.filter((i): i is ItemRow => !!i && i.status !== 'done' && i.status !== 'dropped')
+      return { focus, overdue, due, chase, modules, week }
     },
     ['*'],
     [unlocked.length],
@@ -67,6 +76,7 @@ export function TodayScreen() {
           <TaskRow key={i.id} item={i} onOpen={setEditing} onDone={(it) => void complete(it)} />
         ))}
       </div>
+      {d && d.week.length ? <Section title="This week" items={notFocused(d.week)} onOpen={setEditing} onDone={complete} /> : null}
       {d && d.overdue.length ? <Section title="Overdue" items={notFocused(d.overdue)} onOpen={setEditing} onDone={complete} /> : null}
       {d && d.due.length ? <Section title="Due today" items={notFocused(d.due)} onOpen={setEditing} onDone={complete} /> : null}
       {d && d.chase.length ? <Section title="Chase" items={notFocused(d.chase)} onOpen={setEditing} onDone={complete} /> : null}

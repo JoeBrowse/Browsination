@@ -6,6 +6,7 @@ import { useQuery } from '@/core/ui/useQuery'
 import { useServices } from '../services'
 import { toast } from '../shellStore'
 import { Chips, DueDateField, ModuleField, PriorityField, RecurrenceField } from './fields'
+import { FocusSheet } from '../focus/FocusSheet'
 import { useComplete } from './useComplete'
 
 interface Draft {
@@ -46,6 +47,7 @@ export function ItemSheet({ item, open, onClose }: { item: ItemRow | null; open:
   const complete = useComplete()
   const [d, setD] = useState<Draft>(() => toDraft(item))
   const [newPerson, setNewPerson] = useState('')
+  const [focusOpen, setFocusOpen] = useState(false)
   const people = useQuery(() => s.people.list(), ['people'])
   useEffect(() => {
     if (open) setD(toDraft(item))
@@ -134,6 +136,7 @@ export function ItemSheet({ item, open, onClose }: { item: ItemRow | null; open:
               Done
             </Button>
           ) : null}
+          {item && item.status !== 'done' ? <Button onClick={() => setFocusOpen(true)}>Focus</Button> : null}
           {item ? (
             <Button variant="danger" onClick={() => void setStatus('dropped')}>
               Drop
@@ -141,6 +144,7 @@ export function ItemSheet({ item, open, onClose }: { item: ItemRow | null; open:
           ) : null}
         </div>
       </div>
+      <FocusSheet open={focusOpen} onClose={() => setFocusOpen(false)} item={item} onStarted={onClose} />
     </Sheet>
   )
 }

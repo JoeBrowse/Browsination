@@ -47,6 +47,7 @@ export function leagueRepo(db: SqlDriver, module: string) {
     updateSeason: (id: string, patch: Partial<Omit<SeasonRow, 'id' | 'module' | 'created_at'>>) => updateRow(db, 'league_seasons', id, { ...patch, updated_at: nowIso() }),
     removeSeason: (id: string) => deleteRow(db, 'league_seasons', id),
     fixtures: (seasonId: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE season_id = ? ORDER BY date DESC, created_at DESC', [seasonId]),
+    fixturesBetween: (from: string, to: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date >= ? AND date <= ? ORDER BY date', [module, from, to]),
     fixturesOn: (day: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date = ?', [module, day]),
     nextFixture: async (today: string) => (await db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date >= ? AND result IS NULL ORDER BY date LIMIT 1', [module, today]))[0] ?? null,
     async addFixture(input: Partial<FixtureRow> & { season_id: string; date: string }): Promise<FixtureRow> {

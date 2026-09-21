@@ -36,8 +36,9 @@ describe('syncNotifications', () => {
 
     await settings.set('notifications.enabled', true)
     const on = await syncNotifications({ db, settings, port, permission: async () => 'granted', now })
-    expect(on.scheduled).toBe(3)
-    expect([...pending.values()].map((p) => p.title).sort()).toEqual(['Evening', 'Today', 'call'])
+    // digests, the item reminder and the weekly review reminder (Stage 9, on by default)
+    expect(on.scheduled).toBe(4)
+    expect([...pending.values()].map((p) => p.title).sort()).toEqual(['Evening', 'Today', 'Weekly review', 'call'])
 
     const again = await syncNotifications({ db, settings, port, permission: async () => 'granted', now })
     expect(again.scheduled).toBe(0)
@@ -45,7 +46,7 @@ describe('syncNotifications', () => {
 
     await settings.set('notifications.enabled', false)
     const cleared = await syncNotifications({ db, settings, port, permission: async () => 'granted', now })
-    expect(cleared.cancelled).toBe(3)
+    expect(cleared.cancelled).toBe(4)
     expect(pending.size).toBe(0)
   })
 
