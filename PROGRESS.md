@@ -12,7 +12,7 @@
 | 5 Banjo, snooker | done | `stage-5` | practice timer and sessions, goals, sheet music library with keep-awake viewer; breaks, routines with stats, league |
 | 6 Alcohol, caffeine, medication | done | `stage-6` | drink presets with forecast before confirming, cumulative Widmark model, caffeine half-life, medication log with reminders, morning-after question |
 | 7 Money, app lock | done | `stage-7` | accounts with dated balances and net worth, holdings, goals linked from trips and gifts, cards with utilisation and payment reminders, credit score history, monthly check-in, PIN/biometric lock |
-| 8 Work, side projects | | | |
+| 8 Work, side projects | done | `stage-8` | projects with next actions as items and key dates, work contacts with 1:1 notes, progression (goals, skills, milestones) with an evidence log, learning list |
 | 9 Weekly review, focus, insights | | | |
 | 10 Iron Log merge | | | |
 | 11 Sync (only if asked) | | | |
@@ -120,6 +120,18 @@ Deferred from Stage 6: nothing in scope.
 - Migration 0008 (`accounts`, `balance_snapshots`, `holdings`, `savings_goals`, `credit_scores`, `trips.goal_id`, `gift_ideas.budget_pence`, `gift_ideas.goal_id`); golden export v8.
 
 Deferred from Stage 7: nothing in scope. The database is not encrypted; the lock is a privacy screen (see Later ideas for FLAG_SECURE and encryption).
+
+## Stage 8: what was built
+
+- Module `work` (tray tile "Work", blue accent). Hub keeps the day job and side projects under separate headings; every project row shows its next action (the oldest open item linked to it, due date first) with a Done check; "Coming up" lists key dates inside 14 days; done projects collapse to a list at the bottom.
+- Projects: name, client, area (day job / side), status (idea, active, paused, done), notes, key dates (JSON `[{label, date}]`). Next actions are ordinary `items` (module `work`, entity `work.project`), so they carry due dates, reminders, focus and recurrence and appear on Today and in the Inbox like any task; the project screen adds, completes and edits them (ItemSheet).
+- People: colleagues and contacts are `people` rows with `context = 'work'` plus `role` and `cares_about`; Life's people list shows `personal` rows only, birthday and keep-in-touch nudges still cover everyone. Person screen: role, what they care about, notes, and dated 1:1 notes (each note stamps `last_contacted_at`).
+- Progression: goals, skills and milestones (with target dates, done dates) in one table; evidence log of achievements and feedback with date, source, optional link to a goal or project, and a Copy button that puts the whole log on the clipboard as plain lines for an appraisal form.
+- Learning list: title, kind (book, course, article, video, other), status cycled by tapping the chip (todo → doing → done), link and notes.
+- Today: project key dates within `work.leadDays` (default 7) and milestones within twice that as calendar cards; digest lines switchable off.
+- Migration 0009 (`projects`, `one_on_ones`, `progression_items`, `evidence`, `learning_items`, `people.context/role/cares_about`); golden export v9.
+
+Deferred from Stage 8: nothing in scope.
 
 ## Device checklist (run after installing a stage build)
 

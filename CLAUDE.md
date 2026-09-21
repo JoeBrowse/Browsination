@@ -40,6 +40,7 @@ src/modules/banjo/      Stage 5: practice timer panel, sessions, goals, library 
 src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared view)
 src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
 src/modules/money/      Stage 7: logic.ts (net worth series, utilisation, due dates, goal progress, check-in due), repo, sheets/, screens/ (hub, account, holdings, goals, credit, check-in)
+src/modules/work/       Stage 8: projects (next actions are items with entity 'work.project'), work contacts (people.context = 'work') with 1:1 notes, progression + evidence, learning list
 src/core/lock/          Stage 7: pin.ts (PBKDF2 record + verify), lockStore (zustand), install.ts (boot + background re-lock), LockScreen, RequireUnlock layout route
 src/core/ui/GoalPicker  select an active savings goal from any module (trips, gifts)
 src/core/ui/format.ts   pounds/pence, sparkline path, minutes labels; MoneyInput.tsx and Sparkline.tsx next to it

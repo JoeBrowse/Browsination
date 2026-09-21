@@ -47,6 +47,10 @@ export interface Settings {
   'lock.biometric': boolean
   /** Seconds in the background before the lock re-engages (0 = straight away). */
   'lock.graceSeconds': number
+  /** Days ahead that project key dates and progression milestones appear on Today (0 = off). */
+  'work.leadDays': number
+  /** Mention them in the morning digest too. */
+  'work.digest': boolean
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -78,6 +82,8 @@ export const SETTINGS_DEFAULTS: Settings = {
   'lock.pin': null,
   'lock.biometric': false,
   'lock.graceSeconds': 60,
+  'work.leadDays': 7,
+  'work.digest': true,
 }
 
 export type SettingKey = keyof Settings

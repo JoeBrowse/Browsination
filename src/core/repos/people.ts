@@ -12,9 +12,14 @@ export interface PersonRow {
   last_contacted_at: string | null
   /** Nudge when not contacted for this many days (null = no nudge). */
   keep_in_touch_days: number | null
+  /** 'personal' (life module) or 'work' (Stage 8: colleagues and contacts). */
+  context: PersonContext
+  role: string
+  cares_about: string
   created_at: string
   updated_at: string
 }
+export type PersonContext = 'personal' | 'work'
 
 export interface GiftIdeaRow {
   id: string
@@ -43,6 +48,9 @@ export function peopleRepo(db: SqlDriver) {
         notes: input.notes ?? '',
         last_contacted_at: input.last_contacted_at ?? null,
         keep_in_touch_days: input.keep_in_touch_days ?? null,
+        context: input.context ?? 'personal',
+        role: input.role ?? '',
+        cares_about: input.cares_about ?? '',
         created_at: t,
         updated_at: t,
       }
@@ -53,6 +61,7 @@ export function peopleRepo(db: SqlDriver) {
     update: (id: string, patch: Partial<Omit<PersonRow, 'id' | 'created_at'>>) => updateRow(db, 'people', id, { ...patch, updated_at: nowIso() }),
     remove: (id: string) => deleteRow(db, 'people', id),
     list: () => db.query<PersonRow>('SELECT * FROM people ORDER BY name COLLATE NOCASE'),
+    listByContext: (context: PersonContext) => db.query<PersonRow>('SELECT * FROM people WHERE context = ? ORDER BY name COLLATE NOCASE', [context]),
 
     async addGiftIdea(person_id: string, title: string, notes = ''): Promise<GiftIdeaRow> {
       const t = nowIso()

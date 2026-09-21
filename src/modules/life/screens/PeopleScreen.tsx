@@ -11,7 +11,7 @@ import { useLifeRepo } from '../useLife'
 export function PeopleScreen() {
   const repo = useLifeRepo()
   const [adding, setAdding] = useState(false)
-  const q = useQuery(() => repo.people.list(), ['people'])
+  const q = useQuery(() => repo.people.listByContext('personal'), ['people'])
   const today = calendarDay()
   return (
     <Screen title="People" right={<Button onClick={() => setAdding(true)}>Add</Button>}>
