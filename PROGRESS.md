@@ -149,6 +149,14 @@ Deferred from Stage 9: nothing in scope.
 - Insights lost its two gym lines (the "Workouts" summary row and the gym-vs-mood correlation): nothing in this app writes `workout` entries. Iron Log's own history stays in Iron Log.
 - The Iron Log repositories were only read, never changed.
 
+## After the stages: banjo learning plan
+
+- Joe asked for spaced repetition across several pieces: say how many bars a score has, log how many bars were learned at the end of a practice block, see it as a percentage on the piece and its goal, and have the app decide what to review and when to switch pieces. The research check is in `docs/BANJO_PRACTICE.md`: interleaving across pieces and spacing reviews over days are both supported (Carter & Grahn 2016; Mathias & Goldman 2025; Duke, Simmons & Cash 2009), spacing *within* a session is not, and interleaving feels worse on the day and better the next.
+- Pieces gained `bars` and `learned_bars`; every block of bars learned is a `banjo_chunks` row with SM-2-style state (due, interval, ease, reps, lapses). New chunk: due tomorrow. Ratings Shaky / OK / Solid: shaky back to tomorrow and ease down, OK grows the gap gently, solid 1 → 3 → 7 → ×ease days, capped at 60. A chunk is "solid" from 21 days.
+- Plan screen (`/m/banjo/plan`, tile on the hub, line and button on the Today panel, morning digest line switchable off): the practice timer, due reviews oldest first and alternating pieces (capped by `banjo.maxReviews`), each with Open (the score's first file) and the three ratings; then "Learn new" on the piece that has waited longest (skipping a piece with three fresh chunks while another piece is available), with Open, the bars-learned input prefilled with the piece's usual chunk size, and a total-bars input if the piece has none.
+- Progress: "x of n bars · %" on the hub's Learning list, the library rows, the piece screen (with the chunk list, remove, reset) and as a pill on goals linked to a piece; "% solid" once chunks reach 21-day gaps. Learn and review events are `learn` / `review` log entries; the weekly review's consistency shows review days.
+- Migration 0011 (`banjo_pieces.bars`, `banjo_pieces.learned_bars`, `banjo_chunks`); golden export v11. Version 11 was briefly the withdrawn fitness migration in the `stage-10` build, which nobody downloaded; a device that did run it would need its app data cleared (export first).
+
 ## Device checklist (run after installing a stage build)
 
 - Fresh install opens to Today; five tabs navigate; theme toggle works.
@@ -185,6 +193,7 @@ Deferred from Stage 9: nothing in scope.
 - **TypeScript pinned to 5.9**: TypeScript 7 shipped on 2026-09-20 and typescript-eslint does not support it yet.
 - **Stage 4 calendar** will use Google Calendar's per-calendar secret iCal address (paste a URL into Settings): no OAuth, no Cloud console, works offline-cached. OAuth walkthrough parked in Later ideas.
 - **Stage 7 net worth** counts account balances only; holdings are shown for their own gain/loss and are assumed to sit inside an account (ISA) whose balance already includes them, so nothing is double-counted. Archived accounts drop out of net worth entirely.
+- **Banjo learning plan** keeps the scheduler pure (`src/modules/banjo/learning/logic.ts`) and small: three ratings, no numeric grades, intervals capped at 60 days so even finished pieces come round for a run-through.
 - **Stage 7 lock** stores a PIN hash in `settings` (so it travels with exports and restores with them). The lock guards the screen, not the database file.
 - **Stage 10**: if the Iron Log repository is not reachable from the build environment, the importer targets Iron Log's JSON export shape and the mapping is documented for verification.
 

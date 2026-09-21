@@ -3,6 +3,7 @@ import { Chips } from '@/app/tasks/fields'
 import { formatDay } from '@/core/time/localDay'
 import { Button, EmptyState, Screen } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
+import { percent } from '../learning/logic'
 import type { GoalRow } from '../repo'
 import { useBanjoRepo } from '../useBanjo'
 
@@ -13,6 +14,11 @@ export function GoalsScreen() {
   const [kind, setKind] = useState<GoalRow['kind']>('piece')
   const [date, setDate] = useState('')
   const q = useQuery(() => repo.goals(seg), ['banjo_goals'], [seg])
+  const pieces = useQuery(() => repo.pieces(), ['banjo_pieces'])
+  const progressOf = (pieceId: string | null) => {
+    const p = pieceId ? pieces.data?.find((x) => x.id === pieceId) : null
+    return p?.bars ? percent(Math.min(1, p.learned_bars / p.bars)) : null
+  }
   return (
     <Screen title="Goals">
       <Chips
@@ -33,6 +39,7 @@ export function GoalsScreen() {
               <div className="title">{g.title}</div>
               <div className="sub">{[g.kind, g.target_date ? `by ${formatDay(g.target_date)}` : null].filter(Boolean).join(' · ')}</div>
             </div>
+            {progressOf(g.piece_id) ? <span className="pill accent">{progressOf(g.piece_id)}</span> : null}
             <Button ariaLabel={`Remove goal ${g.title}`} onClick={() => void repo.removeGoal(g.id)}>
               ×
             </Button>

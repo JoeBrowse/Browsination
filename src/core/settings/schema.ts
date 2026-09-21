@@ -59,6 +59,9 @@ export interface Settings {
   'focus.minutes': number
   'focus.breakMinutes': number
   'focus.endNotification': boolean
+  /** Banjo learning plan: reviews per session and whether due reviews appear in the morning digest. */
+  'banjo.maxReviews': number
+  'banjo.reviewDigest': boolean
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -98,6 +101,8 @@ export const SETTINGS_DEFAULTS: Settings = {
   'focus.minutes': 25,
   'focus.breakMinutes': 5,
   'focus.endNotification': true,
+  'banjo.maxReviews': 5,
+  'banjo.reviewDigest': true,
 }
 
 export type SettingKey = keyof Settings
