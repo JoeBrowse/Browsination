@@ -32,6 +32,21 @@ export interface Settings {
   'caffeine.halfLifeHours': number
   /** Medication reminders as individual timed notifications. */
   'alcohol.medicationReminders': boolean
+  /** Day of the month the money check-in becomes due (1-28). */
+  'money.checkInDay': number
+  /** Mention a due check-in in the morning digest. */
+  'money.checkInDigest': boolean
+  /** Card payment due dates as timed reminders, this many days ahead, at this time. */
+  'money.paymentReminders': boolean
+  'money.paymentLeadDays': number
+  'money.reminderTime': string
+  /** App lock: off, the money module only, or the whole app. */
+  'lock.mode': 'off' | 'money' | 'app'
+  /** PBKDF2 record of the PIN (never the PIN itself). */
+  'lock.pin': { hash: string; salt: string; iterations: number; length: number } | null
+  'lock.biometric': boolean
+  /** Seconds in the background before the lock re-engages (0 = straight away). */
+  'lock.graceSeconds': number
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -54,6 +69,15 @@ export const SETTINGS_DEFAULTS: Settings = {
   'alcohol.absorptionHalfLifeMin': 12,
   'caffeine.halfLifeHours': 5,
   'alcohol.medicationReminders': true,
+  'money.checkInDay': 1,
+  'money.checkInDigest': true,
+  'money.paymentReminders': true,
+  'money.paymentLeadDays': 3,
+  'money.reminderTime': '09:00',
+  'lock.mode': 'off',
+  'lock.pin': null,
+  'lock.biometric': false,
+  'lock.graceSeconds': 60,
 }
 
 export type SettingKey = keyof Settings

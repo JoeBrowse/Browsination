@@ -56,6 +56,8 @@ export interface ModuleDef {
   start?: (ctx: { db: SqlDriver }) => () => void
   /** Time-critical reminders the module wants scheduled (e.g. medication times). Core plans, dedupes and toggles them. */
   reminders?: (ctx: TodayContext) => Promise<ModuleReminder[]>
+  /** Screens, Today cards and panels sit behind the app lock when the lock mode is 'money' (or 'app'). */
+  requiresLock?: boolean
 }
 
 export interface ModuleReminder {

@@ -152,3 +152,17 @@ label.btn.disabled { opacity: 0.5; pointer-events: none; }
 .week-bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; margin-top: 6px; }
 .week-bar > div { height: 100%; background: var(--accent); }
 button.tile { font: inherit; color: inherit; }
+
+/* App lock */
+.lock { position: fixed; inset: 0; z-index: 60; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: var(--pad); }
+.lock-title { font-size: 20px; font-weight: 600; }
+.lock-dots { display: flex; gap: 12px; min-height: 16px; }
+.lock-dots span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--muted); display: block; }
+.lock-dots span.on { background: var(--accent); border-color: var(--accent); }
+.lock-pad { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px; }
+.lock-pad button { width: 72px; height: 72px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); font-size: 24px; display: flex; align-items: center; justify-content: center; color: var(--text); }
+.lock-pad button:active { background: var(--surface-2); }
+.progress { height: 8px; border-radius: 4px; background: var(--surface-2); overflow: hidden; margin: 6px 0; }
+.progress > div { height: 100%; background: var(--accent); }
+.big { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.pos { color: var(--accent); }

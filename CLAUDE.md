@@ -22,7 +22,7 @@ src/app/                shell: Boot, boot.ts (open db -> snapshot -> migrate), r
 src/core/db/            SqlDriver interface, driver.sqljs (web + tests), driver.native (Android), migrate.ts, migrations/, schema.ts, events.ts
 src/core/repos/         repositories: the only place SQL is written for app data
 src/core/backup/        export/import envelope, snapshots, FileStore interface
-src/core/platform/      the only files allowed to import @capacitor/* (lint-enforced): db, fileStore, exportTransport, notifications, appEvents
+src/core/platform/      the only files allowed to import @capacitor/* and @aparajita/* (lint-enforced): db, fileStore, exportTransport, notifications, appEvents, biometric
 src/core/modules/       ModuleDef contract + registry (the single core -> modules import)
 src/core/today/         collectToday: merges module cards, sorts, caps
 src/core/tasks/         task queries over items (overdue, due, focus, chase, wins) and recurring completion
@@ -39,6 +39,9 @@ src/core/league/        seasons, fixtures, stats and views shared by chess and s
 src/modules/banjo/      Stage 5: practice timer panel, sessions, goals, library with on-device sheet music and the full-screen viewer
 src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared view)
 src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
+src/modules/money/      Stage 7: logic.ts (net worth series, utilisation, due dates, goal progress, check-in due), repo, sheets/, screens/ (hub, account, holdings, goals, credit, check-in)
+src/core/lock/          Stage 7: pin.ts (PBKDF2 record + verify), lockStore (zustand), install.ts (boot + background re-lock), LockScreen, RequireUnlock layout route
+src/core/ui/GoalPicker  select an active savings goal from any module (trips, gifts)
 src/core/ui/format.ts   pounds/pence, sparkline path, minutes labels; MoneyInput.tsx and Sparkline.tsx next to it
 src/core/time/zoned.ts  IANA-zone wall clock <-> UTC via Intl (used by the iCalendar reader)
 src/core/settings/      typed settings schema + defaults

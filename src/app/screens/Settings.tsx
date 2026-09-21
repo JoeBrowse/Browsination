@@ -3,6 +3,7 @@ import { Card, ModuleScope, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useServices } from '../services'
 import { AppearanceSection } from './settings/AppearanceSection'
 import { DataSection } from './settings/DataSection'
+import { LockSection } from './settings/LockSection'
 import { NotificationsSection } from './settings/NotificationsSection'
 
 export function SettingsScreen() {
@@ -13,6 +14,8 @@ export function SettingsScreen() {
       <DataSection />
       <SectionTitle>Notifications</SectionTitle>
       <NotificationsSection />
+      <SectionTitle>Lock</SectionTitle>
+      <LockSection />
       {getModules()
         .flatMap((m) => (m.settings ? [{ m, Section: m.settings }] : []))
         .map(({ m, Section }) => (

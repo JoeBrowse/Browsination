@@ -11,7 +11,7 @@
 | 4 Chess | done | `stage-4` | calendar feeds cached offline, students and lesson plans, repertoire tree with review queue, tournaments, league |
 | 5 Banjo, snooker | done | `stage-5` | practice timer and sessions, goals, sheet music library with keep-awake viewer; breaks, routines with stats, league |
 | 6 Alcohol, caffeine, medication | done | `stage-6` | drink presets with forecast before confirming, cumulative Widmark model, caffeine half-life, medication log with reminders, morning-after question |
-| 7 Money | | | |
+| 7 Money, app lock | done | `stage-7` | accounts with dated balances and net worth, holdings, goals linked from trips and gifts, cards with utilisation and payment reminders, credit score history, monthly check-in, PIN/biometric lock |
 | 8 Work, side projects | | | |
 | 9 Weekly review, focus, insights | | | |
 | 10 Iron Log merge | | | |
@@ -108,6 +108,19 @@ Deferred from Stage 5: PDF files are stored on the device but are not part of th
 
 Deferred from Stage 6: nothing in scope.
 
+## Stage 7: what was built
+
+- Module `money` (tray tile "Money", gold accent, `requiresLock`). Hub: net worth (latest balance of every unarchived account, cards subtracted), change over the last 30 days, month-by-month trend line, accounts with their latest balance and date, archived accounts hidden behind a button.
+- Accounts: name, kind (current, savings, ISA, credit card, pension, cash, other), provider label; cards add a limit, a payment day of month and a reminder toggle. There is no column for a login, card number, sort code or account number, and a test scans every table for such names. Balances are one dated snapshot per account per day (logging twice replaces the figure); account screen shows history, trend line, archive, and delete only once archived.
+- Holdings: ticker, name, quantity, total cost, price typed in by hand, held-in account. Value, gain and percentage per holding and in total. No price API: free tiers all need a personal API key or have unclear automated-use terms, and UK funds are poorly covered (see Later ideas). Records only; no recommendations anywhere.
+- Savings goals: target, deadline, progress from a linked account's balance or a typed figure, pence per month needed to hit the deadline. Trips and gift ideas carry a `goal_id` (and gift ideas a `budget_pence`); the goal shows what is linked and the linked total. Picker appears in life screens only once a goal exists.
+- Credit: per-card balance owed, limit, utilisation bar, next payment date, reminder toggle; all-cards total. Payment reminders are timed notifications `money.paymentLeadDays` before each due date (module `reminders` hook), plus a Today card and digest line inside the lead window. Credit score: manual history with agency chips and trend line.
+- Monthly check-in (`/m/money/checkin`): from the check-in day of each month a Today card and a digest line say it is due; the flow steps through each account with the last balance ready (Same / Save / Skip), then holding prices, then the net-worth result; every save is immediate so it resumes; finishing logs a `money_checkin` entry (value = net worth) so insights can chart it.
+- App lock (`src/core/lock`): modes off / money / whole app. PIN is 4–8 digits stored as a PBKDF2-SHA256 record (salt, 120k iterations) in settings; verification is constant-time. Optional biometrics through `@aparajita/capacitor-biometric-auth` (device credential allowed as fallback), only offered when the device reports biometry. Locks on boot and after the configured time in the background (0 / 1 / 5 / 15 min). Money mode wraps the module's routes in a layout route that renders the PIN pad, hides its Today cards and panels behind a "Money · Locked" row; app mode replaces the router with the pad. Settings changes need the current PIN (or a biometric pass). Five wrong attempts pause input for 30 seconds.
+- Migration 0008 (`accounts`, `balance_snapshots`, `holdings`, `savings_goals`, `credit_scores`, `trips.goal_id`, `gift_ideas.budget_pence`, `gift_ideas.goal_id`); golden export v8.
+
+Deferred from Stage 7: nothing in scope. The database is not encrypted; the lock is a privacy screen (see Later ideas for FLAG_SECURE and encryption).
+
 ## Device checklist (run after installing a stage build)
 
 - Fresh install opens to Today; five tabs navigate; theme toggle works.
@@ -143,10 +156,14 @@ Deferred from Stage 6: nothing in scope.
 - **Insights tab** is shown as a placeholder as the spec asks; it becomes real in Stage 9.
 - **TypeScript pinned to 5.9**: TypeScript 7 shipped on 2026-09-20 and typescript-eslint does not support it yet.
 - **Stage 4 calendar** will use Google Calendar's per-calendar secret iCal address (paste a URL into Settings): no OAuth, no Cloud console, works offline-cached. OAuth walkthrough parked in Later ideas.
+- **Stage 7 net worth** counts account balances only; holdings are shown for their own gain/loss and are assumed to sit inside an account (ISA) whose balance already includes them, so nothing is double-counted. Archived accounts drop out of net worth entirely.
+- **Stage 7 lock** stores a PIN hash in `settings` (so it travels with exports and restores with them). The lock guards the screen, not the database file.
 - **Stage 10**: if the Iron Log repository is not reachable from the build environment, the importer targets Iron Log's JSON export shape and the mapping is documented for verification.
 
 ## Later ideas
 
+- Holding price refresh: candidates are Alpha Vantage (25 requests/day, personal key), Finnhub (personal key, US-centric), Stooq CSV (no key, terms unclear). Would need a key typed into Settings; UK funds (Vanguard LifeStrategy etc.) are not covered by any of them.
+- Android `FLAG_SECURE` on the window (no screenshots, blank recents thumbnail) while locked or on money screens; SQLCipher-style database encryption keyed from the PIN.
 - Weekly "export nudge" if the last export is older than N days.
 - `VACUUM INTO` native .db snapshot alongside the JSON snapshot.
 - Zip export bundle (JSON + files) once sheet music exists (Stage 5 will add this).
