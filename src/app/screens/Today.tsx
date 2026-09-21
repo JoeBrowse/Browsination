@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import { Lock } from 'lucide-react'
+import { isModuleLocked, useLock } from '@/core/lock/lockStore'
 import { getModules } from '@/core/modules/registry'
 import type { TodayCard } from '@/core/modules/types'
 import type { ItemRow } from '@/core/repos/items'
@@ -22,6 +24,9 @@ export function TodayScreen() {
   const [picking, setPicking] = useState(false)
   const [editing, setEditing] = useState<ItemRow | null>(null)
   const calendarToday = calendarDay()
+  const lock = useLock()
+  const unlocked = getModules().filter((m) => !isModuleLocked(lock, m))
+  const lockedModules = getModules().filter((m) => isModuleLocked(lock, m))
 
   const q = useQuery(
     async () => {
@@ -33,17 +38,18 @@ export function TodayScreen() {
         s.tasks.overdue(calendarToday),
         s.tasks.dueOn(calendarToday),
         s.tasks.chaseDue(calendarToday),
-        collectToday({ db: s.db, today, calendarToday, now }, getModules(), TODAY_CAP),
+        collectToday({ db: s.db, today, calendarToday, now }, unlocked, TODAY_CAP),
       ])
       return { focus, overdue, due, chase, modules }
     },
     ['*'],
+    [unlocked.length],
   )
   const d = q.data
   const focusIds = new Set((d?.focus ?? []).map((i) => i.id))
   const notFocused = (list: ItemRow[]) => list.filter((i) => !focusIds.has(i.id))
   const empty = d && d.focus.length + d.overdue.length + d.due.length + d.chase.length + d.modules.shown.length === 0
-  const panels = getModules().flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, accent: m.accent })))
+  const panels = unlocked.flatMap((m) => (m.panels ?? []).map((p) => ({ ...p, accent: m.accent })))
 
   return (
     <Screen title="Today" right={<span className="muted small">{formatDay(calendarToday)}</span>}>
@@ -93,6 +99,13 @@ export function TodayScreen() {
           {Object.entries(d.modules.collapsed)
             .map(([m, n]) => `${n} more in ${m}`)
             .join(', ')}
+        </div>
+      ) : null}
+      {lockedModules.length ? (
+        <div className="list" style={{ marginTop: 10 }}>
+          {lockedModules.map((m) => (
+            <ListRow key={m.id} title={m.name} sub="Locked" right={<Lock size={18} aria-hidden />} onClick={() => navigate(`/m/${m.id}`)} />
+          ))}
         </div>
       ) : null}
       {empty ? <EmptyState>Clear</EmptyState> : null}

@@ -4,6 +4,8 @@ import { Chips } from '@/app/tasks/fields'
 import { toast } from '@/app/shellStore'
 import { calendarDay, formatDay } from '@/core/time/localDay'
 import { Button, Card, Screen, SectionTitle } from '@/core/ui/primitives'
+import { GoalPicker } from '@/core/ui/GoalPicker'
+import { MoneyInput } from '@/core/ui/MoneyInput'
 import { useQuery } from '@/core/ui/useQuery'
 import { BirthdayInput } from '../fields'
 import { nextBirthday } from '../logic'
@@ -67,8 +69,14 @@ export function PersonScreen() {
         {(q.data?.gifts ?? []).map((g) => (
           <div key={g.id} className="list-row">
             <button className={`check${g.status === 'done' ? ' on' : ''}`} aria-label={`Gift done: ${g.title}`} onClick={() => void repo.people.updateGiftIdea(g.id, { status: g.status === 'done' ? 'idea' : 'done' })} />
-            <div className="grow" style={{ textDecoration: g.status === 'done' ? 'line-through' : 'none' }}>
-              {g.title}
+            <div className="grow">
+              <div style={{ textDecoration: g.status === 'done' ? 'line-through' : 'none' }}>{g.title}</div>
+              <div className="row small" style={{ minHeight: 32, gap: 6 }}>
+                <div style={{ width: 90 }}>
+                  <MoneyInput label={`Budget for ${g.title}`} value={g.budget_pence} onChange={(budget_pence) => void repo.people.updateGiftIdea(g.id, { budget_pence })} />
+                </div>
+                <GoalPicker label={`Goal for ${g.title}`} value={g.goal_id} onChange={(goal_id) => void repo.people.updateGiftIdea(g.id, { goal_id })} />
+              </div>
             </div>
             <Button onClick={() => void repo.people.removeGiftIdea(g.id)} ariaLabel={`Remove gift ${g.title}`}>
               ×

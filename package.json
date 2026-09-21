@@ -18,6 +18,7 @@
     "apk": "npm run build && cap sync android && cd android && ./gradlew assembleDebug"
   },
   "dependencies": {
+    "@aparajita/capacitor-biometric-auth": "^10.0.0",
     "@capacitor-community/keep-awake": "^8.0.1",
     "@capacitor-community/sqlite": "8.1.1",
     "@capacitor/android": "8.5.2",

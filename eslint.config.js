@@ -23,7 +23,7 @@ export default tseslint.config(
         {
           patterns: [
             {
-              group: ['@capacitor/*', '@capacitor-community/*'],
+              group: ['@capacitor/*', '@capacitor-community/*', '@aparajita/*'],
               message: 'Use the adapters in src/core/platform instead of importing Capacitor plugins directly.',
             },
           ],

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useComplete } from '@/app/tasks/useComplete'
 import { calendarDay, formatDay } from '@/core/time/localDay'
+import { GoalPicker } from '@/core/ui/GoalPicker'
 import { Button, Card, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { MoneyInput } from '../fields'
@@ -43,6 +44,10 @@ export function TripScreen() {
         <div className="kv">
           <span className="muted">Budget</span>
           <span>{pounds(trip.budget_pence) || '–'}</span>
+        </div>
+        <div className="row">
+          <span className="grow muted">Goal</span>
+          <GoalPicker value={trip.goal_id} onChange={(goal_id) => void repo.updateTrip(trip.id, { goal_id })} />
         </div>
         <div className="row">
           <span className="grow muted">Spent</span>

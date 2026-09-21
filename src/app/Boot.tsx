@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { RouterProvider } from 'react-router/dom'
 import { exportDatabase, exportFilename, serializeEnvelope } from '@/core/backup/exportDb'
+import { installLock } from '@/core/lock/install'
+import { LockScreen } from '@/core/lock/LockScreen'
+import { effectiveMode, useLock } from '@/core/lock/lockStore'
 import { getModules } from '@/core/modules/registry'
 import { installNotificationSync } from '@/core/notifications/service'
 import { onBackground, onForeground } from '@/core/platform/appEvents'
@@ -30,6 +33,8 @@ export function Boot() {
 
 function Ready({ services }: { services: Services }) {
   const router = useMemo(() => buildRouter(), [])
+  const lock = useLock()
+  useEffect(() => installLock({ settings: services.settings, onForeground, onBackground }), [services])
   useEffect(() => {
     const offSync = installNotificationSync(
       { db: services.db, settings: services.settings, port: createNotificationPort(), permission: checkNotificationPermission, modules: getModules() },
@@ -51,9 +56,10 @@ function Ready({ services }: { services: Services }) {
       offModules.forEach((off) => off())
     }
   }, [services, router])
+  const appLocked = effectiveMode(lock) === 'app' && lock.locked
   return (
     <ServicesContext.Provider value={services}>
-      <RouterProvider router={router} />
+      {appLocked ? <LockScreen /> : <RouterProvider router={router} />}
     </ServicesContext.Provider>
   )
 }

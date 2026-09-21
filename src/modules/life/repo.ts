@@ -48,6 +48,8 @@ export interface TripRow {
   booking_refs: string
   notes: string
   status: 'idea' | 'planned' | 'done'
+  /** Savings goal this trip's budget belongs to (Stage 7). */
+  goal_id: string | null
   created_at: string
   updated_at: string
 }
@@ -126,7 +128,7 @@ export function lifeRepo(db: SqlDriver) {
     trips: () => db.query<TripRow>(`SELECT * FROM trips ORDER BY CASE status WHEN 'planned' THEN 0 WHEN 'idea' THEN 1 ELSE 2 END, start_date`),
     trip: (id: string) => getRow<TripRow>(db, 'trips', id),
     async addTrip(input: Partial<TripRow> & { name: string }): Promise<TripRow> {
-      const row: TripRow = stamped({ id: newId(), name: input.name.trim(), destination: input.destination ?? '', start_date: input.start_date ?? null, end_date: input.end_date ?? null, budget_pence: input.budget_pence ?? null, spent_pence: input.spent_pence ?? null, booking_refs: input.booking_refs ?? '[]', notes: input.notes ?? '', status: input.status ?? 'planned' })
+      const row: TripRow = stamped({ id: newId(), name: input.name.trim(), destination: input.destination ?? '', start_date: input.start_date ?? null, end_date: input.end_date ?? null, budget_pence: input.budget_pence ?? null, spent_pence: input.spent_pence ?? null, booking_refs: input.booking_refs ?? '[]', notes: input.notes ?? '', status: input.status ?? 'planned', goal_id: input.goal_id ?? null })
       await insertRow(db, 'trips', row)
       return row
     },

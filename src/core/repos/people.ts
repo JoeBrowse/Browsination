@@ -22,6 +22,9 @@ export interface GiftIdeaRow {
   title: string
   notes: string
   status: 'idea' | 'done'
+  /** Rough budget and the savings goal it draws on (Stage 7). */
+  budget_pence: number | null
+  goal_id: string | null
   created_at: string
   updated_at: string
 }
@@ -53,7 +56,7 @@ export function peopleRepo(db: SqlDriver) {
 
     async addGiftIdea(person_id: string, title: string, notes = ''): Promise<GiftIdeaRow> {
       const t = nowIso()
-      const row: GiftIdeaRow = { id: newId(), person_id, title: title.trim(), notes, status: 'idea', created_at: t, updated_at: t }
+      const row: GiftIdeaRow = { id: newId(), person_id, title: title.trim(), notes, status: 'idea', budget_pence: null, goal_id: null, created_at: t, updated_at: t }
       await insertRow(db, 'gift_ideas', row)
       return row
     },

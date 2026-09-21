@@ -5,10 +5,11 @@ import { m0004 } from './0004_life'
 import { m0005 } from './0005_chess'
 import { m0006 } from './0006_banjo_snooker'
 import { m0007 } from './0007_alcohol'
+import { m0008 } from './0008_money'
 import type { Migration } from './types'
 
 /** Ordered, contiguous, append-only. Each stage appends its migrations here. */
-export const MIGRATIONS: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007]
+export const MIGRATIONS: Migration[] = [m0001, m0002, m0003, m0004, m0005, m0006, m0007, m0008]
 
 export const SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]?.version ?? 0
 

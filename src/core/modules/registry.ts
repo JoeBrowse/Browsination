@@ -1,5 +1,7 @@
+import { createElement } from 'react'
 import type { RouteObject } from 'react-router'
 import { MODULES } from '@/modules'
+import { ModuleLayout } from './ModuleLayout'
 import type { ModuleDef, ModuleId } from './types'
 
 /** The single sanctioned core -> modules import. Everything else reaches modules through here. */
@@ -13,7 +15,8 @@ export function getModule(id: ModuleId, list: ModuleDef[] = MODULES): ModuleDef 
 }
 
 export function moduleRoutes(list: ModuleDef[] = MODULES): RouteObject[] {
-  return getModules(list).map((m) => ({ path: `m/${m.id}`, children: m.routes, handle: { moduleId: m.id } }))
+  // One layout route per module: accent scope, and the PIN pad in front of modules behind the lock.
+  return getModules(list).map((m) => ({ path: `m/${m.id}`, element: createElement(ModuleLayout, { module: m }), children: m.routes, handle: { moduleId: m.id } }))
 }
 
 export function modulePath(id: ModuleId, sub = ''): string {
