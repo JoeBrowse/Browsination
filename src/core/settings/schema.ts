@@ -59,17 +59,6 @@ export interface Settings {
   'focus.minutes': number
   'focus.breakMinutes': number
   'focus.endNotification': boolean
-  /** Fitness: the unit every set is logged in, rest timer defaults, and the recovery pace. */
-  'fitness.weightUnit': 'kg' | 'lb'
-  'fitness.restCompound': number
-  'fitness.restIsolation': number
-  'fitness.startingSets': number
-  'fitness.recoveryPace': 'faster' | 'normal' | 'slower'
-  /** Bodyweight goal in the weight unit (null = no goal). */
-  'fitness.weightGoal': number | null
-  'fitness.heightCm': number | null
-  /** Workout reminder nudges on Today when nothing was trained for this many days (0 = off). */
-  'fitness.nudgeDays': number
 }
 
 export const SETTINGS_DEFAULTS: Settings = {
@@ -109,14 +98,6 @@ export const SETTINGS_DEFAULTS: Settings = {
   'focus.minutes': 25,
   'focus.breakMinutes': 5,
   'focus.endNotification': true,
-  'fitness.weightUnit': 'kg',
-  'fitness.restCompound': 120,
-  'fitness.restIsolation': 90,
-  'fitness.startingSets': 1,
-  'fitness.recoveryPace': 'normal',
-  'fitness.weightGoal': null,
-  'fitness.heightCm': null,
-  'fitness.nudgeDays': 3,
 }
 
 export type SettingKey = keyof Settings

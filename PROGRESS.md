@@ -14,7 +14,7 @@
 | 7 Money, app lock | done | `stage-7` | accounts with dated balances and net worth, holdings, goals linked from trips and gifts, cards with utilisation and payment reminders, credit score history, monthly check-in, PIN/biometric lock |
 | 8 Work, side projects | done | `stage-8` | projects with next actions as items and key dates, work contacts with 1:1 notes, progression (goals, skills, milestones) with an evidence log, learning list |
 | 9 Weekly review, focus, insights | done | `stage-9` | six-step resumable review with reminder and week-ahead from every module, focus timer logging `focus` entries, Insights with period summaries and six correlations |
-| 10 Iron Log merge | done | `stage-10` | `fitness` module ported from Iron Log v1.23 (exercise database, programme presets, per-set ticks, backdating, readiness, bodyweight, activities), importer with dry run and snapshot |
+| 10 Iron Log merge | | | |
 | 11 Sync (only if asked) | | | |
 
 ## Stage 0: what was built
@@ -142,21 +142,6 @@ Deferred from Stage 8: nothing in scope.
 
 Deferred from Stage 9: nothing in scope.
 
-## Stage 10: what was built
-
-- Migration plan first: `docs/IRONLOG_MIGRATION.md` (what is ported, what is dropped, the key-by-key data mapping, importer behaviour). Joe asked for the plan to wait for approval; under the later "complete everything autonomously" instruction it was written, followed, and is there to review.
-- Iron Log itself: `JoeBrowse/IronLogV2` (private, v1.23.0, one 14,735-line `App.jsx`; `IronLogV3` is an identical public mirror). Nothing was pasted in: the exercise database, secondary muscles, aliases, implements, recovery windows, activity types and programme presets were extracted by a script into `src/modules/fitness/data/*.ts` (data only), and every behaviour was rewritten against this app's SQLite spine.
-- Module `fitness` (tray tile "Gym", red accent, order 30). Hub: unfinished session (resume or discard), this week (days, sessions, sets, volume), readiness chips per muscle from the recovery windows (direct or indirect work, hard or with reps in reserve, pace from Settings; cardio activities count), recent sessions; Start opens the programme's next day, a template or an empty session.
-- Workout screen: exercises with "last time", planned sets pre-filled from last time with a tick box per set (a set with numbers is saved ticked or not), weight × reps × RIR, add set copies the previous one, notes, exercise search with aliases and custom lifts, date and time editable for backdating (never in the future), every change saved at once so closing the app loses nothing. Finish drops empty sets, logs one `workout` entry, updates PBs for the six benchmark lifts and the active programme's log. Finished sessions reopen for edits or deletion.
-- Exercises: database plus custom lifts; per exercise: history, PB, Epley e1RM (max reps for pull-ups and dips), manual tested 1RM, a target with "to go", trend line.
-- Programmes: one active block from a preset (weeks 4/6/8/12), week and sessions-of-planned progress, next day, end early or finish; finished blocks listed.
-- Body: bodyweight one reading per day with goal and trend (Today panel logs it in two taps), cardio activities (run, walk, cycle, other; minutes, km, RPE) that feed readiness.
-- Today: panel (Start or Resume, x of 7, Weigh), a card for an unfinished session and a nudge after `fitness.nudgeDays` without training (off-switchable, no guilt copy). Weekly review consistency: gym and weigh-in days.
-- Importer (Settings → Gym → Import Iron Log backup): reads Iron Log's backup file (format 1), always shows a dry run first (counts, what is already present and skipped, warnings such as unknown exercises kept as custom ones, keys not imported), then writes a `pre-import` snapshot and imports. Sessions, programmes, templates and activities are matched on their Iron Log ids so a second run adds nothing; records, targets and weigh-ins upsert. Per-exercise history older than Iron Log's 200-session cap is rebuilt into sessions. Tested end to end on a synthetic backup with one of everything (`src/modules/fitness/import/ironlog.test.ts`).
-- Migration 0011 (`fitness_exercises`, `workouts`, `workout_exercises`, `workout_sets`, `programmes`, `workout_templates`, `fitness_records`, `fitness_goals`); golden export v11.
-
-Deferred from Stage 10: rest timer, supersets and drop sets as editable UI (imported ones are shown), machine brand and grip editing, the body drawing, measurements. All in Later ideas.
-
 ## Device checklist (run after installing a stage build)
 
 - Fresh install opens to Today; five tabs navigate; theme toggle works.
@@ -198,7 +183,6 @@ Deferred from Stage 10: rest timer, supersets and drop sets as editable UI (impo
 
 ## Later ideas
 
-- Gym: rest timer between sets (Iron Log had compound 120 s / isolation 90 s, sound and vibration), superset and drop-set editing, machine brand and grip, the muscle body drawing, body measurements, "train what is ready" session builder.
 - Holding price refresh: candidates are Alpha Vantage (25 requests/day, personal key), Finnhub (personal key, US-centric), Stooq CSV (no key, terms unclear). Would need a key typed into Settings; UK funds (Vanguard LifeStrategy etc.) are not covered by any of them.
 - Android `FLAG_SECURE` on the window (no screenshots, blank recents thumbnail) while locked or on money screens; SQLCipher-style database encryption keyed from the PIN.
 - Weekly "export nudge" if the last export is older than N days.
