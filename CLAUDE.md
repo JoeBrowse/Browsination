@@ -41,6 +41,7 @@ src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared vie
 src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
 src/modules/money/      Stage 7: logic.ts (net worth series, utilisation, due dates, goal progress, check-in due), repo, sheets/, screens/ (hub, account, holdings, goals, credit, check-in)
 src/modules/work/       Stage 8: projects (next actions are items with entity 'work.project'), work contacts (people.context = 'work') with 1:1 notes, progression + evidence, learning list
+src/modules/fitness/    Stage 10: Iron Log port. data/ (generated tables), logic.ts (readiness, volume, e1RM, programmes), repo.ts (workouts + sets, bodyweight and activity log entries, programmes, records), import/ (Iron Log backup planner + apply), workout/ (cards, picker, start sheet), screens/
 src/core/review/        Stage 9: weekly review timing (Monday weeks, review day rule) and the reviews repo; screen in src/app/screens/Review.tsx with steps in src/app/review
 src/core/focus/         Stage 9: focus session store (localStorage); src/app/focus has the sheet, the bar and the hook that logs `focus` entries
 src/core/insights/      Stage 9: stats.ts (pearson, grouping, pairing) and queries.ts (period summaries + correlation cards over log_entries)
