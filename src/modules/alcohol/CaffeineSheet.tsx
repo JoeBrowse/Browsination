@@ -5,11 +5,15 @@ import { Sheet } from '@/core/ui/Sheet'
 import { useQuery } from '@/core/ui/useQuery'
 import { bedtimeNote, CAFFEINE_PRESETS, remainingAt } from './caffeine'
 import { nextWallClock } from './forecast'
-import { useAlcoholRepo, useAlcoholSettings } from './useAlcohol'
+import { useServices } from '@/app/services'
+import { nthLabel } from './coffee'
+import { useAlcoholRepo, useAlcoholSettings, useCoffee } from './useAlcohol'
 
 export function CaffeineSheet({ open, onClose, initial }: { open: boolean; onClose: () => void; initial?: { preset: string; name: string; mg: number } | null }) {
+  const s = useServices()
   const repo = useAlcoholRepo()
   const settings = useAlcoholSettings()
+  const coffee = useCoffee()
   const [spec, setSpec] = useState(initial ?? { preset: 'coffee', name: 'Coffee', mg: 95 })
   useEffect(() => {
     if (open) setSpec(initial ?? { preset: 'coffee', name: 'Coffee', mg: 95 })
@@ -41,7 +45,11 @@ export function CaffeineSheet({ open, onClose, initial }: { open: boolean; onClo
           <input type="number" inputMode="numeric" aria-label="Caffeine mg" value={spec.mg} onChange={(e) => setSpec({ ...spec, preset: 'custom', mg: Number(e.target.value) || 0 })} style={{ width: 120 }} />
           <span className="muted">mg</span>
         </div>
+        {coffee.data ? <div className="muted small">{nthLabel(coffee.data.today.cups + 1)}{coffee.data.today.target ? ` · target ${coffee.data.today.target} a day` : ''}</div> : null}
         {note ? <div className="small">{note}</div> : null}
+        {coffee.data && (spec.preset !== coffee.data.usual.preset || spec.mg !== coffee.data.usual.mg) ? (
+          <Button onClick={() => void s.settings.set('caffeine.usual', { preset: spec.preset, name: spec.name, mg: spec.mg })}>Make this my usual</Button>
+        ) : null}
         <div className="btn-row">
           <Button onClick={onClose}>Cancel</Button>
           <Button variant="primary" onClick={() => void save()} disabled={spec.mg <= 0}>

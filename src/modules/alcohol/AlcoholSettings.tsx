@@ -1,4 +1,5 @@
 import { Chips } from '@/app/tasks/fields'
+import { CAFFEINE_PRESETS } from './caffeine'
 import { useServices } from '@/app/services'
 import type { Settings } from '@/core/settings/schema'
 import { Card, Toggle } from '@/core/ui/primitives'
@@ -55,6 +56,28 @@ export function AlcoholSettings() {
         {num('alcohol.eliminationRate', 'Elimination (g/L per h)', '0.01', 0.08, 0.3)}
         {num('alcohol.absorptionHalfLifeMin', 'Absorption half-life (min)', '1', 3, 60)}
         {num('caffeine.halfLifeHours', 'Caffeine half-life (h)', '0.5', 2, 10)}
+        <div className="row">
+          <span className="grow">Cups a day</span>
+          <Chips label="Cups a day" value={v['caffeine.perDay']} onChange={(n) => set('caffeine.perDay', n)} options={[0, 1, 2, 3].map((n) => ({ label: n === 0 ? 'Just count' : `${n}`, value: n }))} />
+        </div>
+        <div className="row">
+          <span className="grow">Last cup by</span>
+          <input type="time" aria-label="Last cup by" style={{ width: 120 }} value={v['caffeine.latestTime']} onChange={(e) => set('caffeine.latestTime', e.target.value)} />
+        </div>
+        <div className="row">
+          <span className="grow">Usual cup</span>
+          <select aria-label="Usual cup" value={v['caffeine.usual'].preset} onChange={(e) => {
+            const p = CAFFEINE_PRESETS.find((x) => x.key === e.target.value)
+            if (p) set('caffeine.usual', { preset: p.key, name: p.label, mg: p.mg })
+          }}>
+            {CAFFEINE_PRESETS.map((p) => (
+              <option key={p.key} value={p.key}>
+                {p.label} · {p.mg} mg
+              </option>
+            ))}
+            {!CAFFEINE_PRESETS.some((p) => p.key === v['caffeine.usual'].preset) ? <option value={v['caffeine.usual'].preset}>{v['caffeine.usual'].name} · {v['caffeine.usual'].mg} mg</option> : null}
+          </select>
+        </div>
         <div className="row">
           <span className="grow">Medication reminders</span>
           <Toggle label="Medication reminders" checked={v['alcohol.medicationReminders']} onChange={(on) => set('alcohol.medicationReminders', on)} />

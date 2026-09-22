@@ -6,6 +6,7 @@ import { toast } from '@/app/shellStore'
 import { logDayRange, todayLocal } from '@/core/time/localDay'
 import { Button, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
+import { CaffeineRow } from './CaffeineCard'
 import { CaffeineSheet } from './CaffeineSheet'
 import { DrinkSheet } from './DrinkSheet'
 import { curve, summarise, unitsFromGrams } from './model'
@@ -66,19 +67,7 @@ export function AlcoholPanel() {
           {lastSpec ? 'Other' : 'Log'}
         </Button>
       </div>
-      <div className="row" style={{ minHeight: 44 }}>
-        <span className="grow">Caffeine</span>
-        {lastCoffee ? (
-          <Button
-            onClick={() => {
-              void repo.logCaffeine(lastCoffee.mg, lastCoffee.preset, lastCoffee.name).then(() => toast(`${lastCoffee.name} again`))
-            }}
-          >
-            {lastCoffee.name}
-          </Button>
-        ) : null}
-        <Button onClick={() => setCoffeeOpen(true)}>{lastCoffee ? 'Other' : 'Log'}</Button>
-      </div>
+      <CaffeineRow onOther={() => setCoffeeOpen(true)} />
       {(d?.meds ?? []).map((m) => (
         <div key={m.id} className="row" style={{ minHeight: 44 }}>
           <span className="grow">

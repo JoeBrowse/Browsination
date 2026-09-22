@@ -30,6 +30,11 @@ export interface Settings {
   /** Absorption half-life in minutes (12 typical; 6 fasting, 20+ after a meal). */
   'alcohol.absorptionHalfLifeMin': number
   'caffeine.halfLifeHours': number
+  /** Cups a day you are aiming for (0 = just count them) and the time you want the last one by. */
+  'caffeine.perDay': number
+  'caffeine.latestTime': string
+  /** The one-tap cup. */
+  'caffeine.usual': { preset: string; name: string; mg: number }
   /** Medication reminders as individual timed notifications. */
   'alcohol.medicationReminders': boolean
   /** Day of the month the money check-in becomes due (1-28). */
@@ -83,6 +88,9 @@ export const SETTINGS_DEFAULTS: Settings = {
   'alcohol.eliminationRate': 0.15,
   'alcohol.absorptionHalfLifeMin': 12,
   'caffeine.halfLifeHours': 5,
+  'caffeine.perDay': 1,
+  'caffeine.latestTime': '12:00',
+  'caffeine.usual': { preset: 'coffee', name: 'Coffee', mg: 95 },
   'alcohol.medicationReminders': true,
   'money.checkInDay': 1,
   'money.checkInDigest': true,

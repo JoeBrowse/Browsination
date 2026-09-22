@@ -4,6 +4,7 @@ import { formatDay } from '@/core/time/localDay'
 import { Button, Card, EmptyState, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { BacChart } from '../Chart'
+import { CaffeineCard } from '../CaffeineCard'
 import { CaffeineSheet } from '../CaffeineSheet'
 import { DrinkSheet } from '../DrinkSheet'
 import { caffeineCurve } from '../caffeine'
@@ -68,19 +69,14 @@ export function AlcoholScreen() {
           <div style={{ width: `${Math.min(100, (weekUnits / WEEKLY_GUIDELINE_UNITS) * 100)}%` }} />
         </div>
       </Card>
+      <SectionTitle>Caffeine</SectionTitle>
+      <CaffeineCard onOther={() => setCoffeeOpen(true)} />
       <div className="tray" style={{ marginTop: 14 }}>
         <Link to="medication" className="tile">
           <span className="label">Medication</span>
         </Link>
-        <button className="tile" onClick={() => setCoffeeOpen(true)}>
-          <span className="label">Caffeine</span>
-        </button>
       </div>
-      {est ? (
-        <div className="muted small" style={{ marginTop: 10 }}>
-          Caffeine at bedtime: about {Math.round(est.caffeineAtBed)} mg{d && d.caffeineToday.length ? ` (${d.caffeineToday.length} today)` : ''}
-        </div>
-      ) : null}
+      {est && est.caffeineAtBed >= 1 ? <div className="muted small" style={{ marginTop: 10 }}>About {Math.round(est.caffeineAtBed)} mg still active at bedtime</div> : null}
       <SectionTitle>Last 7 days</SectionTitle>
       {d && d.recent.length === 0 ? <EmptyState>No drinks logged</EmptyState> : null}
       <div className="list">
