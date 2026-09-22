@@ -157,6 +157,14 @@ Deferred from Stage 9: nothing in scope.
 - Progress: "x of n bars · %" on the hub's Learning list, the library rows, the piece screen (with the chunk list, remove, reset) and as a pill on goals linked to a piece; "% solid" once chunks reach 21-day gaps. Learn and review events are `learn` / `review` log entries; the weekly review's consistency shows review days.
 - Migration 0011 (`banjo_pieces.bars`, `banjo_pieces.learned_bars`, `banjo_chunks`); golden export v11. Version 11 was briefly the withdrawn fitness migration in the `stage-10` build, which nobody downloaded; a device that did run it would need its app data cleared (export first).
 
+## After the stages: coffee clicker for one a day
+
+- Joe is moving to one coffee a day, in the morning, so caffeine logging became a one-tap clicker instead of a two-step sheet. Settings: cups a day (default 1, or "just count"), last cup by (default 12:00), and the usual cup.
+- Today panel and the Drinks hub: one tap on the cup button logs the usual (the toast says which cup it was, "2nd today"); a second row shows mg today and when it drops below the level that usually matters for sleep ("clear by 13:04"), plus a note when the last cup was after the cut-off. Once the target is met the button stops being the primary colour and reads "Another": still one tap, no scolding.
+- Hub card adds the week: "6 of 7 at or under 1", the average a day, days without, and one dot per day (filled within the target, outlined when none, ringed when over).
+- The sheet says which cup it would be and can promote what you picked to the usual cup.
+- Logic in `src/modules/alcohol/coffee.ts`, pure and tested (day status against the target, the clear-by search over the half-life curve, the week summary under the day-start-hour rule). No schema change: caffeine is still `caffeine` log entries.
+
 ## Device checklist (run after installing a stage build)
 
 - Fresh install opens to Today; five tabs navigate; theme toggle works.
