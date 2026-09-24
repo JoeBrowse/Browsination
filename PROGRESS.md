@@ -203,6 +203,7 @@ Deferred from Stage 9: nothing in scope.
 - **Stage 7 net worth** counts account balances only; holdings are shown for their own gain/loss and are assumed to sit inside an account (ISA) whose balance already includes them, so nothing is double-counted. Archived accounts drop out of net worth entirely.
 - **Banjo learning plan** keeps the scheduler pure (`src/modules/banjo/learning/logic.ts`) and small: three ratings, no numeric grades, intervals capped at 60 days so even finished pieces come round for a run-through.
 - **Stage 7 lock** stores a PIN hash in `settings` (so it travels with exports and restores with them). The lock guards the screen, not the database file.
+- **EGCA 2026/27** is typed into `src/modules/chess/data/egca.ts` and loaded with the button on the league screen. Idempotent: a second tap adds nothing and never overwrites a result, a note, or a team detail edited by hand. **Centurians** are in Division 1 but appear on neither the EGCA captains page nor the club list, so their venue and captain are blank — fill them in on the team once known. Away venues come from the opponent's club, so the three other Cardiff Chess Club teams (Castles, Bishops, Dragons) correctly show the YMCA either way.
 - **Stage 10**: if the Iron Log repository is not reachable from the build environment, the importer targets Iron Log's JSON export shape and the mapping is documented for verification.
 
 ## Later ideas

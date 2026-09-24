@@ -51,3 +51,10 @@ export function seasonStats(fixtures: FixtureLike[]): SeasonStats {
 export function resultLabel(result: number | null): string {
   return result === 1 ? 'W' : result === 0.5 ? 'D' : result === 0 ? 'L' : '–'
 }
+
+/** Fixtures in the order you want to see them: next ones first, then the ones already gone by. */
+export function splitFixtures<T extends { date: string }>(list: T[], today: string): { next: T[]; past: T[] } {
+  const next = list.filter((f) => f.date >= today).sort((a, b) => a.date.localeCompare(b.date))
+  const past = list.filter((f) => f.date < today).sort((a, b) => b.date.localeCompare(a.date))
+  return { next, past }
+}

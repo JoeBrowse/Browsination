@@ -34,8 +34,8 @@ src/app/capture/        QuickCapture (registers the FAB handler)
 src/core/consistency/   "x of last N days" and heat map maths (never streaks)
 src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
 src/modules/life/       Stage 3: lists over items, people and birthdays, date nights, trips, life admin; logic.ts holds the pure nudge maths
-src/modules/chess/      Stage 4: ics.ts (iCalendar reader + recurrence expansion), sync.ts, students, repertoire, tournaments
-src/core/league/        seasons, fixtures, stats and views shared by chess and snooker (`module` column)
+src/modules/chess/      Stage 4: ics.ts (iCalendar reader + recurrence expansion), sync.ts, students, repertoire, tournaments; data/egca.ts is the EGCA 2026/27 fixture list + team directory, loaded on request by data/loadEgca.ts
+src/core/league/        seasons, fixtures (home/away, round, venue, start time), the opposition directory (`league_teams`), stats and views shared by chess and snooker (`module` column)
 src/modules/banjo/      Stage 5: practice timer panel, sessions, goals, library with on-device sheet music and the full-screen viewer; learning/ (spaced, interleaved chunk scheduler + plan hook), screens/PlanScreen
 src/modules/snooker/    Stage 5: breaks, routines with stats, league (shared view)
 src/modules/alcohol/    Stage 6: model.ts (Widmark + absorption + elimination), forecast.ts, caffeine.ts, drink/caffeine sheets, medication
