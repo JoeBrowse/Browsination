@@ -16,6 +16,9 @@ export async function chessWeek(ctx: WeekContext): Promise<WeekItem[]> {
     if (t.start_date && t.start_date >= ctx.from && t.start_date <= ctx.to && t.entered !== 'skipped') out.push({ key: `tournament:${t.id}`, date: t.start_date, title: t.name, sub: t.entered === 'yes' ? 'tournament' : 'tournament, not entered', href: '/m/chess/tournaments' })
     if (t.entry_deadline && t.entered === 'no' && t.entry_deadline >= ctx.from && t.entry_deadline <= ctx.to) out.push({ key: `deadline:${t.id}`, date: t.entry_deadline, title: `${t.name} entry deadline`, href: '/m/chess/tournaments' })
   }
-  for (const f of await repo.league.fixturesBetween(ctx.from, ctx.to)) out.push({ key: `fixture:${f.id}`, date: f.date, title: `Chess v ${f.opponent_team || f.opponent || 'TBC'}`, sub: f.colour ? `${f.colour}${f.board ? `, board ${f.board}` : ''}` : undefined, href: '/m/chess/league' })
+  for (const f of await repo.league.fixturesBetween(ctx.from, ctx.to)) {
+    const sub = [f.start_time || null, f.home ? null : f.venue || 'away', f.colour || null, f.board ? `board ${f.board}` : null].filter(Boolean).join(', ')
+    out.push({ key: `fixture:${f.id}`, date: f.date, title: `Chess ${f.home ? 'v' : 'at'} ${f.opponent_team || f.opponent || 'TBC'}`, sub: sub || undefined, href: '/m/chess/league' })
+  }
   return out
 }

@@ -14,12 +14,12 @@ export async function chessToday(ctx: TodayContext): Promise<TodayCard[]> {
   }
   for (const f of await repo.league.fixturesOn(ctx.calendarToday)) {
     const vs = f.opponent_team || f.opponent
-    cards.push({ key: `chess:fixture:${f.id}`, module: 'chess', kind: 'event', title: `League${vs ? ` vs ${vs}` : ''}`, sub: [f.board ? `board ${f.board}` : null, f.colour, f.opponent_team ? f.opponent || null : null].filter(Boolean).join(' · ') || undefined, priority: 1, href: '/m/chess/league' })
+    cards.push({ key: `chess:fixture:${f.id}`, module: 'chess', kind: 'event', title: `${f.start_time ? `${f.start_time} ` : ''}League${vs ? ` ${f.home ? 'v' : 'at'} ${vs}` : ''}`, sub: [f.venue || null, f.board ? `board ${f.board}` : null, f.colour, f.opponent_team ? f.opponent || null : null].filter(Boolean).join(' · ') || undefined, priority: 1, href: '/m/chess/league' })
   }
   const next = await repo.league.nextFixture(ctx.calendarToday)
   if (next && next.date !== ctx.calendarToday) {
     const d = daysBetween(ctx.calendarToday, next.date)
-    if (d <= 7) cards.push({ key: `chess:next-fixture`, module: 'chess', kind: 'nudge', title: `League in ${d} days${next.opponent_team ? ` vs ${next.opponent_team}` : ''}`, priority: 3, href: '/m/chess/league' })
+    if (d <= 7) cards.push({ key: `chess:next-fixture`, module: 'chess', kind: 'nudge', title: `League in ${d} ${d === 1 ? 'day' : 'days'}${next.opponent_team ? ` ${next.home ? 'v' : 'at'} ${next.opponent_team}` : ''}`, sub: next.home ? undefined : next.venue || undefined, priority: 3, href: '/m/chess/league' })
   }
   for (const n of tournamentNudges(await repo.tournaments(), ctx.calendarToday)) {
     cards.push({ key: `chess:tournament:${n.id}`, module: 'chess', kind: 'nudge', title: n.title, sub: n.sub, priority: n.priority, href: '/m/chess/tournaments' })

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resultLabel, seasonStats } from './stats'
+import { resultLabel, seasonStats, splitFixtures } from './stats'
 
 describe('seasonStats', () => {
   it('summarises a season', () => {
@@ -16,5 +16,14 @@ describe('seasonStats', () => {
     expect(seasonStats([])).toMatchObject({ played: 0, scorePct: 0, avgOpponentRating: null, performance: null })
     expect(resultLabel(null)).toBe('–')
     expect(resultLabel(0.5)).toBe('D')
+  })
+})
+
+describe('splitFixtures', () => {
+  it('puts what is coming next first and the rest newest-first', () => {
+    const list = [{ date: '2026-09-02' }, { date: '2027-05-19' }, { date: '2026-12-09' }, { date: '2026-09-16' }]
+    const { next, past } = splitFixtures(list, '2026-09-16')
+    expect(next.map((f) => f.date)).toEqual(['2026-09-16', '2026-12-09', '2027-05-19'])
+    expect(past.map((f) => f.date)).toEqual(['2026-09-02'])
   })
 })

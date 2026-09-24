@@ -15,6 +15,23 @@ export interface SeasonRow {
   updated_at: string
 }
 
+/** The opposition directory: where a team plays, which night, and who to ring. */
+export interface TeamRow {
+  id: string
+  module: string
+  name: string
+  club: string
+  venue: string
+  address: string
+  night: string
+  captain: string
+  phone: string
+  email: string
+  notes: string
+  created_at: string
+  updated_at: string
+}
+
 export interface FixtureRow {
   id: string
   season_id: string
@@ -22,6 +39,12 @@ export interface FixtureRow {
   date: string
   opponent: string
   opponent_team: string
+  /** 1 at our place, 0 at theirs. */
+  home: number
+  round: number | null
+  venue: string
+  /** Local wall clock 'HH:MM', '' when it is the league's usual time. */
+  start_time: string
   board: number | null
   colour: 'white' | 'black' | null
   result: number | null
@@ -49,6 +72,8 @@ export function leagueRepo(db: SqlDriver, module: string) {
     fixtures: (seasonId: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE season_id = ? ORDER BY date DESC, created_at DESC', [seasonId]),
     fixturesBetween: (from: string, to: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date >= ? AND date <= ? ORDER BY date', [module, from, to]),
     fixturesOn: (day: string) => db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date = ?', [module, day]),
+    fixtureByRound: async (seasonId: string, date: string, opponentTeam: string) =>
+      (await db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE season_id = ? AND date = ? AND opponent_team = ?', [seasonId, date, opponentTeam]))[0] ?? null,
     nextFixture: async (today: string) => (await db.query<FixtureRow>('SELECT * FROM league_fixtures WHERE module = ? AND date >= ? AND result IS NULL ORDER BY date LIMIT 1', [module, today]))[0] ?? null,
     async addFixture(input: Partial<FixtureRow> & { season_id: string; date: string }): Promise<FixtureRow> {
       const t = nowIso()
@@ -59,6 +84,10 @@ export function leagueRepo(db: SqlDriver, module: string) {
         date: input.date,
         opponent: input.opponent ?? '',
         opponent_team: input.opponent_team ?? '',
+        home: input.home ?? 1,
+        round: input.round ?? null,
+        venue: input.venue ?? '',
+        start_time: input.start_time ?? '',
         board: input.board ?? null,
         colour: input.colour ?? null,
         result: input.result ?? null,
@@ -81,6 +110,28 @@ export function leagueRepo(db: SqlDriver, module: string) {
       }
     },
     removeFixture: (id: string) => deleteRow(db, 'league_fixtures', id),
+    // teams
+    teams: () => db.query<TeamRow>('SELECT * FROM league_teams WHERE module = ? ORDER BY name COLLATE NOCASE', [module]),
+    team: async (name: string) => (await db.query<TeamRow>('SELECT * FROM league_teams WHERE module = ? AND name = ?', [module, name]))[0] ?? null,
+    /** Insert or update by name; blank incoming fields never overwrite something already filled in. */
+    async upsertTeam(input: Partial<TeamRow> & { name: string }): Promise<TeamRow> {
+      const t = nowIso()
+      const existing = (await db.query<TeamRow>('SELECT * FROM league_teams WHERE module = ? AND name = ?', [module, input.name]))[0]
+      if (existing) {
+        const patch: Partial<TeamRow> = {}
+        for (const k of ['club', 'venue', 'address', 'night', 'captain', 'phone', 'email', 'notes'] as const) {
+          const v = input[k]
+          if (typeof v === 'string' && v !== '') patch[k] = v
+        }
+        if (Object.keys(patch).length) await updateRow(db, 'league_teams', existing.id, { ...patch, updated_at: t })
+        return { ...existing, ...patch }
+      }
+      const row: TeamRow = { id: newId(), module, name: input.name, club: input.club ?? '', venue: input.venue ?? '', address: input.address ?? '', night: input.night ?? '', captain: input.captain ?? '', phone: input.phone ?? '', email: input.email ?? '', notes: input.notes ?? '', created_at: t, updated_at: t }
+      await insertRow(db, 'league_teams', row)
+      return row
+    },
+    updateTeam: (id: string, patch: Partial<Omit<TeamRow, 'id' | 'module' | 'created_at'>>) => updateRow(db, 'league_teams', id, { ...patch, updated_at: nowIso() }),
+    removeTeam: (id: string) => deleteRow(db, 'league_teams', id),
     /** One `match_result` log entry per fixture (replaced on change) so insights can correlate results. */
     async logResult(row: FixtureRow): Promise<void> {
       const existing = await db.query<{ id: string }>(`SELECT id FROM log_entries WHERE type = 'match_result' AND entity_type = 'league.fixture' AND entity_id = ?`, [row.id])
