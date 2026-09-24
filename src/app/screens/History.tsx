@@ -32,16 +32,26 @@ export function HistoryScreen() {
   let lastDay = ''
   return (
     <Screen title="History">
-      <Chips label="Module" value={module} onChange={(v) => {
+      <Chips
+        label="Module"
+        value={module}
+        onChange={(v) => {
           setModule(v)
           setType(null)
           setLimit(PAGE)
-        }} options={[{ label: 'All', value: null }, ...modules.map((m) => ({ label: m.name, value: m.id as string | null }))]} />
+        }}
+        options={[{ label: 'All', value: null }, ...modules.map((m) => ({ label: m.name, value: m.id as string | null }))]}
+      />
       <div style={{ marginTop: 8 }}>
-        <Chips label="Type" value={type} onChange={(v) => {
+        <Chips
+          label="Type"
+          value={type}
+          onChange={(v) => {
             setType(v)
             setLimit(PAGE)
-          }} options={[{ label: 'All', value: null }, ...types.map((d) => ({ label: d.label, value: d.type as string | null }))]} />
+          }}
+          options={[{ label: 'All', value: null }, ...types.map((d) => ({ label: d.label, value: d.type as string | null }))]}
+        />
       </div>
       <SectionTitle>
         Entries
