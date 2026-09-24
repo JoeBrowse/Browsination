@@ -2,6 +2,7 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter } from 'react-router'
 import { describe, expect, it } from 'vitest'
+import { useLock } from '@/core/lock/lockStore'
 import { logEntriesRepo } from '@/core/repos/logEntries'
 import { localDayOf, localTimeOf } from '@/core/time/localDay'
 import { makeTestDb } from '@/test/db'
@@ -85,6 +86,17 @@ describe('History', () => {
     const all = await logs.recent({ type: 'mood' })
     expect(all).toHaveLength(1)
     expect(all[0]!.value).toBe(5)
+  })
+
+  it('leaves a locked module out, the same as Today does', async () => {
+    const { logs, view } = await setup()
+    await logs.add({ type: 'money_checkin', module: 'money', value: 1234567, unit: 'pence', payload: { accounts: 4 } })
+    await logs.add({ type: 'meditation', module: 'brain', value: 10, unit: 'min' })
+    useLock.setState({ mode: 'money', hasPin: true, locked: true })
+    await view()
+    expect(screen.queryByText('Money check-in')).toBeNull()
+    expect(inList('Meditation')).toBeTruthy()
+    useLock.setState({ mode: 'off', hasPin: false, locked: false })
   })
 
   it('deletes an entry', async () => {

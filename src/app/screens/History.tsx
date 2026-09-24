@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Chips } from '@/app/tasks/fields'
+import { isModuleLocked, useLock } from '@/core/lock/lockStore'
 import { describeEntry, type LogTypeDef } from '@/core/logs/types'
 import { findLogType, getModules, moduleLogTypes } from '@/core/modules/registry'
 import type { LogEntry } from '@/core/repos/logEntries'
@@ -23,12 +24,16 @@ export function HistoryScreen() {
   const [picking, setPicking] = useState(false)
   const q = useQuery(() => s.logs.recent({ module: module ?? undefined, type: type ?? undefined, limit }), ['log_entries'], [module, type, limit])
   const present = useQuery(() => s.logs.typesPresent(), ['log_entries'])
-  const entries = q.data ?? []
-  const rows = present.data ?? []
+  // a locked module's entries stay out of here too, the same as on Today
+  const lock = useLock()
+  const hidden = new Set(getModules().filter((m) => isModuleLocked(lock, m)).map((m) => m.id as string))
+  const shown = (m: string | null) => !m || !hidden.has(m)
+  const entries = (q.data ?? []).filter((e) => shown(e.module))
+  const rows = (present.data ?? []).filter((r) => shown(r.module))
   const modules = getModules().filter((m) => rows.some((r) => r.module === m.id))
   // only types with something in them: the filter is for finding an entry, not for browsing the schema
   const types = dedupe(rows.filter((r) => !module || r.module === module).flatMap((r) => findLogType(r.type) ?? []))
-  const addable = moduleLogTypes().filter((d) => d.addable)
+  const addable = moduleLogTypes().filter((d) => d.addable && shown(d.module === 'core' ? null : d.module))
   let lastDay = ''
   return (
     <Screen title="History">
