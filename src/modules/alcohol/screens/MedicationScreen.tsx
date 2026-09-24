@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { LogSheet } from '@/app/logs/LogSheet'
+import { stampFor, WhenToggle, type When } from '@/app/logs/WhenField'
 import type { LogEntry } from '@/core/repos/logEntries'
 import { formatDay, localDayOf, localTimeOf } from '@/core/time/localDay'
 import { Button, EmptyState, Screen, SectionTitle, Toggle } from '@/core/ui/primitives'
@@ -13,6 +14,7 @@ export function MedicationScreen() {
   const [dose, setDose] = useState('')
   const [times, setTimes] = useState('08:00')
   const [editing, setEditing] = useState<LogEntry | null>(null)
+  const [when, setWhen] = useState<When | null>(null)
   const meds = useQuery(() => repo.medications(false), ['medications'])
   const recent = useQuery(() => repo.medicationLogsBetween(new Date(Date.now() - 7 * 86_400_000).toISOString(), new Date(Date.now() + 60_000).toISOString()), ['log_entries'])
   const add = async () => {
@@ -28,6 +30,9 @@ export function MedicationScreen() {
   return (
     <Screen title="Medication">
       {!meds.loading && (meds.data?.length ?? 0) === 0 ? <EmptyState>Nothing yet</EmptyState> : null}
+      <div className="btn-row" style={{ marginBottom: 6 }}>
+        <WhenToggle value={when} onChange={setWhen} label="Taken earlier" />
+      </div>
       <div className="list">
         {(meds.data ?? []).map((m) => (
           <div key={m.id} className="list-row">
@@ -37,7 +42,7 @@ export function MedicationScreen() {
               </div>
               <div className="sub">{repo.medicationTimes(m).join(', ') || 'no reminder times'}</div>
             </div>
-            <Button onClick={() => void repo.logMedication(m)} ariaLabel={`Take ${m.name}`}>
+            <Button onClick={() => void repo.logMedication(m, stampFor(when).ts)} ariaLabel={`Take ${m.name}`}>
               Taken
             </Button>
             <Toggle label={`Active ${m.name}`} checked={!!m.active} onChange={(on) => void repo.updateMedication(m.id, { active: on ? 1 : 0 })} />
