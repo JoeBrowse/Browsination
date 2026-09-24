@@ -11,10 +11,12 @@ import { PlanScreen } from './screens/PlanScreen'
 import { SessionsScreen } from './screens/SessionsScreen'
 import { banjoDigest } from './today'
 import { banjoConsistency } from './week'
+import { banjoLogTypes } from './logTypes'
 
 const ViewerScreen = lazy(() => import('./screens/ViewerScreen').then((m) => ({ default: m.ViewerScreen })))
 
 export const banjoModule: ModuleDef = {
+  logTypes: banjoLogTypes,
   id: 'banjo',
   name: 'Banjo',
   icon: Music,

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
+import { stampFor, WhenToggle, type When } from '@/app/logs/WhenField'
 import { toast } from '@/app/shellStore'
 import { consistencyLabel } from '@/core/consistency/consistency'
 import { minutesLabel } from '@/core/ui/format'
@@ -55,18 +56,28 @@ export function PracticePanel() {
           </Link>
         </div>
       ) : null}
-      <FinishSheet minutes={finishing} onClose={() => setFinishing(null)} lastWorkedOn={String(d?.last?.payload.worked_on ?? '')} onSave={async (minutes, worked_on, pieceId) => {
-        await repo.logPractice({ minutes, worked_on, piece_id: pieceId })
-        toast(`Practice ${minutesLabel(minutes)}`)
-      }} />
+      <div className="row" style={{ minHeight: 36 }}>
+        <span className="grow muted small">{startedAt === null ? 'Practised without the timer?' : ''}</span>
+        {startedAt === null ? <Button onClick={() => setFinishing(30)}>Log</Button> : null}
+      </div>
+      <FinishSheet
+        minutes={finishing}
+        onClose={() => setFinishing(null)}
+        lastWorkedOn={String(d?.last?.payload.worked_on ?? '')}
+        onSave={async (minutes, worked_on, pieceId, when) => {
+          await repo.logPractice({ minutes, worked_on, piece_id: pieceId, ts: when ? stampFor(when).ts : undefined })
+          toast(`Practice ${minutesLabel(minutes)}`)
+        }}
+      />
     </div>
   )
 }
 
-export function FinishSheet({ minutes, onClose, onSave, lastWorkedOn }: { minutes: number | null; onClose: () => void; onSave: (minutes: number, workedOn: string, pieceId: string | null) => Promise<void>; lastWorkedOn: string }) {
+export function FinishSheet({ minutes, onClose, onSave, lastWorkedOn }: { minutes: number | null; onClose: () => void; onSave: (minutes: number, workedOn: string, pieceId: string | null, when: When | null) => Promise<void>; lastWorkedOn: string }) {
   const repo = useBanjoRepo()
   const [workedOn, setWorkedOn] = useState(lastWorkedOn)
   const [pieceId, setPieceId] = useState<string | null>(null)
+  const [when, setWhen] = useState<When | null>(null)
   const [mins, setMins] = useState(minutes ?? 0)
   const pieces = useQuery(() => repo.pieces(), ['banjo_pieces'])
   useEffect(() => {
@@ -93,11 +104,13 @@ export function FinishSheet({ minutes, onClose, onSave, lastWorkedOn }: { minute
             ))}
           </select>
         ) : null}
+        <WhenToggle value={when} onChange={setWhen} label="Earlier" />
         <Button
           variant="primary"
           block
           onClick={() => {
-            void onSave(mins, workedOn, pieceId)
+            void onSave(mins, workedOn, pieceId, when)
+            setWhen(null)
             onClose()
           }}
         >

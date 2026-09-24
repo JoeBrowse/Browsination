@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
+import { stampFor, WhenToggle, type When } from '@/app/logs/WhenField'
 import { useServices } from '@/app/services'
 import { toast } from '@/app/shellStore'
 import { consistency, consistencyLabel, daysWith } from '@/core/consistency/consistency'
@@ -81,12 +82,14 @@ export function SnookerScreen() {
 function BreakSheet({ open, onClose, highest }: { open: boolean; onClose: () => void; highest: number | null }) {
   const repo = useSnookerRepo()
   const [points, setPoints] = useState('')
+  const [when, setWhen] = useState<When | null>(null)
   const save = async () => {
     const n = Number(points)
     if (!Number.isFinite(n) || n <= 0) return
-    await repo.logBreak(Math.round(n))
+    await repo.logBreak(Math.round(n), '', stampFor(when).ts)
     toast(highest !== null && n > highest ? `New highest break: ${n}` : `Break ${n}`)
     setPoints('')
+    setWhen(null)
     onClose()
   }
   return (
@@ -99,7 +102,8 @@ function BreakSheet({ open, onClose, highest }: { open: boolean; onClose: () => 
         }}
       >
         <input type="number" inputMode="numeric" aria-label="Break points" placeholder="Points" min={1} max={147} value={points} onChange={(e) => setPoints(e.target.value)} />
-        <div className="muted small">{formatDay(new Date().toISOString().slice(0, 10))}</div>
+        {when ? null : <div className="muted small">{formatDay(new Date().toISOString().slice(0, 10))}</div>}
+        <WhenToggle value={when} onChange={setWhen} />
         <Button type="submit" variant="primary" block disabled={!points}>
           Save
         </Button>

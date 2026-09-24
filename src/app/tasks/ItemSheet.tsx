@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ItemRow, ItemStatus, RecurFrom } from '@/core/repos/items'
+import { calendarDay, localTimeOf, stampAt, tzOffsetMin } from '@/core/time/localDay'
 import { Button } from '@/core/ui/primitives'
 import { Sheet } from '@/core/ui/Sheet'
 import { useQuery } from '@/core/ui/useQuery'
@@ -22,6 +23,9 @@ interface Draft {
   priority: number
   waiting_person_id: string | null
   chase_date: string | null
+  /** When it was finished, for a done item: civil day and wall-clock time. */
+  done_day: string | null
+  done_time: string
 }
 
 function toDraft(item: ItemRow | null): Draft {
@@ -38,7 +42,14 @@ function toDraft(item: ItemRow | null): Draft {
     priority: item?.priority ?? 0,
     waiting_person_id: item?.waiting_person_id ?? null,
     chase_date: item?.chase_date ?? null,
+    done_day: item?.completed_at ? localDay(item.completed_at) : null,
+    done_time: item?.completed_at ? localTimeOf(item.completed_at, tzOffsetMin(new Date(item.completed_at))) : '12:00',
   }
+}
+
+const localDay = (iso: string) => {
+  const d = new Date(iso)
+  return calendarDay(d)
 }
 
 /** Create or edit an item. Also the inbox triage surface: status chips at the top, big actions at the bottom. */
@@ -72,6 +83,7 @@ export function ItemSheet({ item, open, onClose }: { item: ItemRow | null; open:
       priority: d.priority,
       waiting_person_id: d.status === 'waiting' ? waiting_person_id : null,
       chase_date: d.status === 'waiting' ? d.chase_date : null,
+      ...(item?.status === 'done' && d.done_day ? { completed_at: stampAt(d.done_day, d.done_time).ts } : {}),
     }
     if (item) await s.items.update(item.id, patch)
     else await s.items.create(patch)
@@ -110,6 +122,15 @@ export function ItemSheet({ item, open, onClose }: { item: ItemRow | null; open:
             </select>
             {!d.waiting_person_id ? <input aria-label="New person" placeholder="New person" value={newPerson} onChange={(e) => setNewPerson(e.target.value)} /> : null}
             <input type="date" aria-label="Chase date" value={d.chase_date ?? ''} onChange={(e) => set('chase_date', e.target.value || null)} />
+          </div>
+        ) : null}
+        {item?.status === 'done' ? (
+          <div className="stack" style={{ gap: 6 }}>
+            <span className="sub muted">Done on</span>
+            <div className="row">
+              <input type="date" aria-label="Done date" max={calendarDay()} value={d.done_day ?? ''} onChange={(e) => set('done_day', e.target.value || null)} />
+              <input type="time" aria-label="Done time" value={d.done_time} onChange={(e) => set('done_time', e.target.value || '12:00')} style={{ width: 120 }} />
+            </div>
           </div>
         ) : null}
         <ModuleField value={d.module} onChange={(v) => set('module', v)} />

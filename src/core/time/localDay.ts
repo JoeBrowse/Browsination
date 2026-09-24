@@ -58,6 +58,23 @@ export function stampNow(now: Date = new Date()): { ts: string; tz_offset_min: n
   return { ts: now.toISOString(), tz_offset_min: tzOffsetMin(now) }
 }
 
+/**
+ * A local wall-clock moment in the device zone as an instant plus the offset in force then, so
+ * something that happened earlier can be logged with the same fields a live write would capture.
+ */
+export function stampAt(day: LocalDay, time = '12:00'): { ts: string; tz_offset_min: number } {
+  const [y, m, d] = day.split('-').map(Number) as [number, number, number]
+  const [hh, mm] = time.split(':').map(Number) as [number, number]
+  const t = new Date(y, m - 1, d, hh || 0, mm || 0, 0, 0)
+  return { ts: t.toISOString(), tz_offset_min: tzOffsetMin(t) }
+}
+
+/** The local wall-clock time an instant fell at, 'HH:MM'. */
+export function localTimeOf(tsIso: string, offsetMin: number): string {
+  const t = new Date(Date.parse(tsIso) + offsetMin * 60_000)
+  return `${pad(t.getUTCHours())}:${pad(t.getUTCMinutes())}`
+}
+
 /** Instant range [day at dayStartHour, next day at dayStartHour) in the device zone. */
 export function logDayRange(day: LocalDay, dayStartHour: number): { from: string; to: string } {
   const [y, m, d] = day.split('-').map(Number) as [number, number, number]

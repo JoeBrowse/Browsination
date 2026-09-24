@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { stampFor, WhenToggle, type When } from '@/app/logs/WhenField'
 import { Chips } from '@/app/tasks/fields'
 import { toast } from '@/app/shellStore'
 import { calendarDay, formatDay } from '@/core/time/localDay'
@@ -21,6 +22,7 @@ const KIT = [
 ]
 
 export function PersonScreen() {
+  const [when, setWhen] = useState<When | null>(null)
   const { id = '' } = useParams()
   const repo = useLifeRepo()
   const navigate = useNavigate()
@@ -37,14 +39,18 @@ export function PersonScreen() {
         <Button
           variant="primary"
           onClick={() => {
-            void repo.contacted(p.id)
+            void repo.contacted(p.id, when ? stampFor(when).ts : undefined)
             toast('Contacted')
+            setWhen(null)
           }}
         >
           Contacted
         </Button>
       }
     >
+      <div className="btn-row" style={{ marginBottom: 8 }}>
+        <WhenToggle value={when} onChange={setWhen} />
+      </div>
       <Card>
         <div className="stack">
           <input aria-label="Name" defaultValue={p.name} onBlur={(e) => update({ name: e.target.value.trim() || p.name })} />

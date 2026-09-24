@@ -29,7 +29,9 @@ src/core/tasks/         task queries over items (overdue, due, focus, chase, win
 src/core/recurrence/    RRULE subset: parse, format, describe, nextOccurrence
 src/core/notifications/ pure planner + reconcile, sync service; the port lives in platform/notifications.ts
 src/core/time/          localDay: day-start-hour rule, civil day arithmetic
-src/app/tasks/          TaskRow, ItemSheet (create/edit/triage), FocusPicker, WinsList, fields, useComplete
+src/app/tasks/          TaskRow, ItemSheet (create/edit/triage, including when a done item was finished), FocusPicker, WinsList, fields, useComplete
+src/core/logs/          the log type registry (LogTypeDef: label, value, editable payload fields, daily, addable, a module's own editor)
+src/app/logs/           WhenField and WhenToggle (when it happened, defaults to now), LogSheet (edits any log entry); the History screen is src/app/screens/History.tsx
 src/app/capture/        QuickCapture (registers the FAB handler)
 src/core/consistency/   "x of last N days" and heat map maths (never streaks)
 src/modules/brain/      Stage 2: check-in panel, habits, sleep and timer sheets
@@ -59,7 +61,8 @@ src/test/               makeTestDb (sql.js in memory), fixtures, golden exports
 - **No file over 400 lines** (ESLint `max-lines`, fails CI). Split by concern, not by line count.
 - **UI never touches SQL.** Screens call repositories; repositories call `SqlDriver`.
 - **Capacitor plugins only in `src/core/platform/`** (plus `driver.native.ts`). Everything else is platform-agnostic and testable in Node. Network requests go through `platform/http.ts` (Capacitor HTTP natively, so the WebView's CORS rules do not apply).
-- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `reminders` (timed notifications the planner schedules), `settings` (Settings section), `start` (background work at boot, returns a disposer), `week` (dated things in a range, for the weekly review), `consistency` (x-of-7 lines for the review), `requiresLock`.
+- **Module hooks** (`ModuleDef`): `routes`, `today` (data cards), `panels` (interactive Today cards), `digest` (morning digest lines), `reminders` (timed notifications the planner schedules), `settings` (Settings section), `start` (background work at boot, returns a disposer), `week` (dated things in a range, for the weekly review), `consistency` (x-of-7 lines for the review), `logTypes` (how this module's log types are shown and edited), `requiresLock`.
+- **Everything logged can be edited and backdated.** A new log type ships with a `LogTypeDef` (there is a test for that) so History can edit it; a repository function that writes a log takes an optional `ts`; a list of logged things is tappable, opening either `LogSheet` or the module's own sheet (`LogTypeDef.editor`, used for drinks and caffeine so grams and units stay consistent). Backdated entries are stamped at midday when the day is not today, never at "now on an old day". History hides a locked module's entries, the same as Today.
 - **Alcohol module tone**: informative and neutral, positives and negatives, no lecturing, the disclaimer wherever an estimate is shown, and never any "safe to drive" indicator.
 - **Ids** are text UUIDs from `newId()`. Never integer autoincrement.
 - **Time.** Instants (things that happened) are ISO 8601 UTC strings + `tz_offset_min` captured at write. Scheduled things are civil: `due_date` `YYYY-MM-DD`, `due_time`/`reminder_at` local wall-clock. "Which day" is computed at read time with `localDayOf(ts, offset, dayStartHour)`; never store a day column.

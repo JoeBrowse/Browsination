@@ -10,8 +10,10 @@ import { StudentScreen } from './screens/StudentScreen'
 import { StudentsScreen } from './screens/StudentsScreen'
 import { TournamentsScreen } from './screens/TournamentsScreen'
 import { chessDigest, chessToday } from './today'
+import { chessLogTypes } from './logTypes'
 
 export const chessModule: ModuleDef = {
+  logTypes: chessLogTypes,
   id: 'chess',
   name: 'Chess',
   icon: Crown,

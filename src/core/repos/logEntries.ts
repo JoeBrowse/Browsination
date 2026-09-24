@@ -89,6 +89,23 @@ export function logEntriesRepo(db: SqlDriver) {
       const rows = await db.query<LogEntryRow>('SELECT * FROM log_entries WHERE type = ? ORDER BY ts DESC LIMIT 1', [type])
       return rows[0] ? toEntry(rows[0]) : null
     },
+    /** Newest first, for the history list. Filters are all optional. */
+    async recent(filter: { type?: string; module?: string; limit?: number; beforeTs?: string } = {}): Promise<LogEntry[]> {
+      const where: string[] = []
+      const args: (string | number)[] = []
+      const clause = (sql: string, arg: string) => {
+        where.push(sql)
+        args.push(arg)
+      }
+      if (filter.type) clause('type = ?', filter.type)
+      if (filter.module) clause('module = ?', filter.module)
+      if (filter.beforeTs) clause('ts < ?', filter.beforeTs)
+      args.push(filter.limit ?? 50)
+      const rows = await db.query<LogEntryRow>(`SELECT * FROM log_entries ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY ts DESC LIMIT ?`, args)
+      return rows.map(toEntry)
+    },
+    /** Which types actually have entries, newest activity first. */
+    typesPresent: () => db.query<{ type: string; module: string | null; n: number }>('SELECT type, module, COUNT(*) AS n FROM log_entries GROUP BY type, module ORDER BY MAX(ts) DESC'),
     /** Timestamps and offsets of every entry of a type since `fromTs`; the caller buckets them into days. */
     stampsOfType(type: string, fromTs: string): Promise<{ ts: string; tz_offset_min: number }[]> {
       return db.query<{ ts: string; tz_offset_min: number }>('SELECT ts, tz_offset_min FROM log_entries WHERE type = ? AND ts >= ?', [type, fromTs])

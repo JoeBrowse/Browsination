@@ -1,6 +1,7 @@
 import { loadInsights, type Insights, type PeriodSummary } from '@/core/insights/queries'
 import { describeCorrelation } from '@/core/insights/stats'
 import { todayLocal } from '@/core/time/localDay'
+import { Link } from 'react-router'
 import { Card, EmptyState, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { Scatter } from '../insights/Scatter'
@@ -16,6 +17,12 @@ export function InsightsScreen() {
   const d = q.data
   return (
     <Screen title="Insights">
+      <Link to="/history" className="list-row">
+        <div className="grow">
+          <div className="title">History</div>
+          <div className="sub">Edit or backdate anything logged</div>
+        </div>
+      </Link>
       {d ? (
         <>
           <SectionTitle>This week</SectionTitle>

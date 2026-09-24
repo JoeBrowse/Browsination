@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router'
-import { formatDay } from '@/core/time/localDay'
+import type { LogEntry } from '@/core/repos/logEntries'
+import { formatDay, localDayOf } from '@/core/time/localDay'
 import { Button, Card, EmptyState, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { BacChart } from '../Chart'
@@ -17,6 +18,7 @@ export function AlcoholScreen() {
   const settings = useAlcoholSettings()
   const [drinkOpen, setDrinkOpen] = useState(false)
   const [coffeeOpen, setCoffeeOpen] = useState(false)
+  const [editing, setEditing] = useState<LogEntry | null>(null)
   const q = useQuery(async () => {
     const now = new Date()
     const dayAgo = new Date(now.getTime() - 24 * 3_600_000).toISOString()
@@ -81,22 +83,20 @@ export function AlcoholScreen() {
       {d && d.recent.length === 0 ? <EmptyState>No drinks logged</EmptyState> : null}
       <div className="list">
         {[...(d?.recent ?? [])].reverse().map((e) => (
-          <div key={e.id} className="list-row" style={{ minHeight: 44 }}>
+          <button key={e.id} className="list-row" style={{ minHeight: 44 }} onClick={() => setEditing(e)}>
             <span className="muted small" style={{ width: 96 }}>
-              {formatDay(e.ts.slice(0, 10))} {fmtTime(Date.parse(e.ts))}
+              {formatDay(localDayOf(e.ts, e.tz_offset_min))} {fmtTime(Date.parse(e.ts))}
             </span>
             <span className="grow">{String(e.payload.name ?? 'Drink')}</span>
             <span className="pill">{Number(e.payload.units ?? 0).toFixed(1)}</span>
-            <Button ariaLabel="Remove drink" onClick={() => void repo.logs.remove(e.id)}>
-              ×
-            </Button>
-          </div>
+          </button>
         ))}
       </div>
       <div className="muted small" style={{ marginTop: 16 }}>
         {DISCLAIMER}
       </div>
       <DrinkSheet open={drinkOpen} onClose={() => setDrinkOpen(false)} />
+      {editing ? <DrinkSheet key={editing.id} entry={editing} open onClose={() => setEditing(null)} /> : null}
       <CaffeineSheet open={coffeeOpen} onClose={() => setCoffeeOpen(false)} />
     </Screen>
   )

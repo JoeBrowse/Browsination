@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
+import { LogSheet } from '@/app/logs/LogSheet'
+import { stampFor, WhenToggle, type When } from '@/app/logs/WhenField'
 import { toast } from '@/app/shellStore'
-import { formatDay } from '@/core/time/localDay'
+import type { LogEntry } from '@/core/repos/logEntries'
+import { formatDay, localDayOf } from '@/core/time/localDay'
 import { Button, Card, Screen, SectionTitle } from '@/core/ui/primitives'
 import { Sparkline } from '@/core/ui/Sparkline'
 import { useQuery } from '@/core/ui/useQuery'
@@ -13,6 +16,8 @@ export function RoutineScreen() {
   const repo = useSnookerRepo()
   const navigate = useNavigate()
   const [score, setScore] = useState('')
+  const [when, setWhen] = useState<When | null>(null)
+  const [editing, setEditing] = useState<LogEntry | null>(null)
   const q = useQuery(async () => {
     const routine = await repo.routine(id)
     if (!routine) return null
@@ -25,9 +30,10 @@ export function RoutineScreen() {
   const log = async () => {
     const n = Number(score)
     if (!Number.isFinite(n)) return
-    await repo.logAttempt(routine, n)
+    await repo.logAttempt(routine, n, '', stampFor(when).ts)
     toast(stats.best !== null && n > stats.best ? `Personal best ${n}` : `Logged ${n}`)
     setScore('')
+    setWhen(null)
   }
   return (
     <Screen title={routine.name}>
@@ -43,6 +49,9 @@ export function RoutineScreen() {
           Log
         </Button>
       </form>
+      <div style={{ marginTop: 8 }}>
+        <WhenToggle value={when} onChange={setWhen} />
+      </div>
       <Card style={{ marginTop: 12 }}>
         <div className="kv">
           <span>Personal best</span>
@@ -61,13 +70,11 @@ export function RoutineScreen() {
       <SectionTitle>Attempts</SectionTitle>
       <div className="list">
         {[...d.attempts].reverse().map((a) => (
-          <div key={a.id} className="list-row" style={{ minHeight: 40 }}>
-            <span className="grow small muted">{formatDay(a.ts.slice(0, 10))}</span>
+          <button key={a.id} className="list-row" style={{ minHeight: 40 }} onClick={() => setEditing(a)}>
+            <span className="grow small muted">{formatDay(localDayOf(a.ts, a.tz_offset_min))}</span>
             <span>{a.value}</span>
-            <Button ariaLabel="Remove attempt" onClick={() => void repo.removeEntry(a.id)}>
-              ×
-            </Button>
-          </div>
+            <span className="muted small">edit</span>
+          </button>
         ))}
       </div>
       <Card style={{ marginTop: 16 }}>
@@ -85,6 +92,7 @@ export function RoutineScreen() {
           </Button>
         </div>
       </Card>
+      {editing ? <LogSheet key={editing.id} entry={editing} open onClose={() => setEditing(null)} /> : null}
     </Screen>
   )
 }

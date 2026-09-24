@@ -9,8 +9,10 @@ import { HoldingsScreen } from './screens/HoldingsScreen'
 import { MoneyScreen } from './screens/MoneyScreen'
 import { moneyDigest, moneyReminders, moneyToday } from './today'
 import { moneyWeek } from './week'
+import { moneyLogTypes } from './logTypes'
 
 export const moneyModule: ModuleDef = {
+  logTypes: moneyLogTypes,
   id: 'money',
   name: 'Money',
   icon: Wallet,

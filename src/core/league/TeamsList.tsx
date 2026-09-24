@@ -59,7 +59,7 @@ export function TeamsList({ repo, teams }: { repo: LeagueRepo; teams: TeamRow[] 
   return (
     <>
       <SectionTitle>
-        <button className="linky" onClick={() => setOpen((v) => !v)}>
+        <button type="button" onClick={() => setOpen((v) => !v)}>
           Teams {teams.length ? `(${teams.length})` : ''} {open ? '−' : '+'}
         </button>
         {open ? <Button onClick={() => setEditing('new')}>Add</Button> : null}
@@ -71,7 +71,7 @@ export function TeamsList({ repo, teams }: { repo: LeagueRepo; teams: TeamRow[] 
             {teams.map((t) => (
               <Card key={t.id}>
                 <div className="kv">
-                  <button className="title" onClick={() => setEditing(t)}>
+                  <button type="button" className="title" onClick={() => setEditing(t)}>
                     {t.name}
                   </button>
                   {t.night ? <span className="pill">{t.night}</span> : null}

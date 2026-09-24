@@ -2,7 +2,7 @@ import type { SqlDriver } from '@/core/db/driver'
 import { newId, nowIso } from '@/core/ids'
 import { deleteRow, getRow, insertRow, updateRow } from '@/core/repos/base'
 import { logEntriesRepo, type LogEntry } from '@/core/repos/logEntries'
-import { logDayRange, type LocalDay } from '@/core/time/localDay'
+import { logDayRange, stampAt, stampNow, todayLocal, type LocalDay } from '@/core/time/localDay'
 
 export interface HabitRow {
   id: string
@@ -24,6 +24,11 @@ export const LOG = {
 } as const
 
 export const HABIT_ENTITY = 'brain.habit'
+
+/** Now for today, midday for an earlier day, so a backdated entry lands on the day it belongs to. */
+export function stampFor(day: LocalDay, dayStartHour: number): { ts: string; tz_offset_min: number } {
+  return day === todayLocal(new Date(), dayStartHour) ? stampNow() : stampAt(day, '12:00')
+}
 
 export function brainRepo(db: SqlDriver) {
   const logs = logEntriesRepo(db)
@@ -55,22 +60,25 @@ export function brainRepo(db: SqlDriver) {
       for (const e of await this.entriesOn(LOG.habit, day, dayStartHour)) if (e.entity_id) out.set(e.entity_id, e)
       return out
     },
-    /** One-per-day types (mood, sleep, stretch): update today's entry if present, else add. */
+    /** One-per-day types (mood, sleep, stretch): update that day's entry if present, else add. */
     async upsertDaily(type: string, day: LocalDay, dayStartHour: number, input: { value?: number | null; unit?: string | null; payload?: Record<string, unknown>; ts?: string }): Promise<LogEntry> {
       const existing = (await this.entriesOn(type, day, dayStartHour))[0]
       if (existing) {
         await logs.update(existing.id, { value: input.value ?? existing.value, unit: input.unit ?? existing.unit, payload: { ...existing.payload, ...(input.payload ?? {}) }, ...(input.ts ? { ts: input.ts } : {}) })
         return (await logs.get(existing.id))!
       }
-      return logs.add({ type, module: 'brain', value: input.value ?? null, unit: input.unit ?? null, payload: input.payload ?? {}, ts: input.ts })
+      const stamp = input.ts ? { ts: input.ts } : stampFor(day, dayStartHour)
+      return logs.add({ type, module: 'brain', value: input.value ?? null, unit: input.unit ?? null, payload: input.payload ?? {}, ...stamp })
     },
+    /** Ticks and un-ticks a habit on a day; filling in an earlier day stamps the tick on that day. */
     async toggleHabit(habitId: string, day: LocalDay, dayStartHour: number): Promise<boolean> {
       const tick = (await this.habitTicksOn(day, dayStartHour)).get(habitId)
       if (tick) {
         await logs.remove(tick.id)
         return false
       }
-      await logs.add({ type: LOG.habit, module: 'brain', value: 1, entity_type: HABIT_ENTITY, entity_id: habitId })
+      const habit = await getRow<HabitRow>(db, 'habits', habitId)
+      await logs.add({ type: LOG.habit, module: 'brain', value: 1, entity_type: HABIT_ENTITY, entity_id: habitId, payload: habit ? { name: habit.name } : {}, ...stampFor(day, dayStartHour) })
       return true
     },
     /** Stamps of a habit (or any type) since an instant, for consistency maths. */

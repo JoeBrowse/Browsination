@@ -5,6 +5,7 @@ import { Screen } from '@/core/ui/primitives'
 import { RoutineScreen } from './screens/RoutineScreen'
 import { SnookerScreen } from './screens/SnookerScreen'
 import { snookerConsistency, snookerWeek } from './week'
+import { snookerLogTypes } from './logTypes'
 
 function SnookerLeagueScreen() {
   return (
@@ -15,6 +16,7 @@ function SnookerLeagueScreen() {
 }
 
 export const snookerModule: ModuleDef = {
+  logTypes: snookerLogTypes,
   id: 'snooker',
   name: 'Snooker',
   icon: Target,
