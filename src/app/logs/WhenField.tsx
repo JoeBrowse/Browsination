@@ -31,13 +31,13 @@ export function WhenField({ value, onChange, label = 'When' }: { value: When; on
         <input type="time" aria-label={`${label} time`} value={value.time} onChange={(e) => onChange({ ...value, time: e.target.value || '12:00' })} style={{ width: 120 }} />
       </div>
       <div className="btn-row">
-        <button className="pill" onClick={() => shift(-1)}>
+        <button type="button" className="pill" onClick={() => shift(-1)}>
           Day back
         </button>
-        <button className="pill" onClick={() => shift(1)} disabled={value.day >= calendarDay()}>
+        <button type="button" className="pill" onClick={() => shift(1)} disabled={value.day >= calendarDay()}>
           Day on
         </button>
-        <button className="pill" onClick={() => onChange(whenNow())}>
+        <button type="button" className="pill" onClick={() => onChange(whenNow())}>
           Now
         </button>
       </div>
@@ -52,14 +52,14 @@ export const stampFor = (w: When | null): { ts: string; tz_offset_min: number } 
 export function WhenToggle({ value, onChange, label = 'Earlier' }: { value: When | null; onChange: (w: When | null) => void; label?: string }) {
   if (!value)
     return (
-      <button className="pill" onClick={() => onChange(whenNow())}>
+      <button type="button" className="pill" onClick={() => onChange(whenNow())}>
         {label}
       </button>
     )
   return (
     <div className="stack">
       <WhenField value={value} onChange={onChange} />
-      <button className="pill" onClick={() => onChange(null)}>
+      <button type="button" className="pill" onClick={() => onChange(null)}>
         Now
       </button>
     </div>
