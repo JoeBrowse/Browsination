@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useServices } from '@/app/services'
 import { consistency, consistencyLabel, daysWith, heatmap } from '@/core/consistency/consistency'
-import { addDays, todayLocal } from '@/core/time/localDay'
+import { addDays, formatDay, lastNDays, todayLocal, type LocalDay } from '@/core/time/localDay'
 import { Heatmap } from '@/core/ui/Heatmap'
 import { Button, Card, Screen, SectionTitle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
@@ -23,7 +23,7 @@ export function HabitScreen() {
       const today = todayLocal(new Date(), dayStartHour)
       const since = new Date(Date.parse(`${addDays(today, -91)}T00:00:00Z`)).toISOString()
       const days = daysWith(await repo.stampsFor(LOG.habit, since, habit.id), dayStartHour)
-      return { habit, today, week: consistency(days, today, 7, habit.target_per_week), month: consistency(days, today, 28, habit.target_per_week), weeks: heatmap(days, today, 12) }
+      return { habit, today, dayStartHour, days, week: consistency(days, today, 7, habit.target_per_week), month: consistency(days, today, 28, habit.target_per_week), weeks: heatmap(days, today, 12) }
     },
     ['log_entries', 'habits', 'settings'],
     [id],
@@ -49,6 +49,17 @@ export function HabitScreen() {
       </Card>
       <SectionTitle>12 weeks</SectionTitle>
       <Heatmap weeks={d.weeks} label={`${habit.name} last 12 weeks`} />
+      <SectionTitle>Fill in a day</SectionTitle>
+      <div className="chips">
+        {lastNDays(d.today, 14).map((day: LocalDay) => {
+          const on = d.days.has(day)
+          return (
+            <button key={day} className={`chip${on ? ' on' : ''}`} aria-pressed={on} aria-label={`${habit.name} ${formatDay(day)}`} onClick={() => void repo.toggleHabit(habit.id, day, d.dayStartHour)}>
+              {Number(day.slice(8))}
+            </button>
+          )
+        })}
+      </div>
       {editing ? (
         <Card style={{ marginTop: 14 }}>
           <div className="stack">

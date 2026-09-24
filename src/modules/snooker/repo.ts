@@ -48,10 +48,10 @@ export function snookerRepo(db: SqlDriver) {
       db
         .query<{ value: number }>(`SELECT value FROM log_entries WHERE type = ? AND entity_id = ? AND value IS NOT NULL ORDER BY ts DESC LIMIT ?`, [LOG.attempt, routineId, limit])
         .then((rows) => rows.map((r) => r.value).reverse()),
-    logAttempt: (routine: RoutineRow, value: number, note = '') =>
-      logs.add({ type: LOG.attempt, module: 'snooker', value, unit: routine.unit, entity_type: ROUTINE_ENTITY, entity_id: routine.id, payload: note ? { note } : {} }),
+    logAttempt: (routine: RoutineRow, value: number, note = '', ts?: string) =>
+      logs.add({ type: LOG.attempt, module: 'snooker', value, unit: routine.unit, ts, entity_type: ROUTINE_ENTITY, entity_id: routine.id, payload: { routine: routine.name, ...(note ? { note } : {}) } }),
     removeEntry: (id: string) => logs.remove(id),
-    logBreak: (points: number, note = '') => logs.add({ type: LOG.break, module: 'snooker', value: points, unit: 'points', payload: note ? { note } : {} }),
+    logBreak: (points: number, note = '', ts?: string) => logs.add({ type: LOG.break, module: 'snooker', value: points, unit: 'points', ts, payload: note ? { note } : {} }),
     highestBreak: async () => (await db.query<{ v: number | null }>(`SELECT MAX(value) AS v FROM log_entries WHERE type = ?`, [LOG.break]))[0]?.v ?? null,
     recentBreaks: (limit = 20) => db.query<{ id: string; ts: string; value: number }>(`SELECT id, ts, value FROM log_entries WHERE type = ? ORDER BY ts DESC LIMIT ?`, [LOG.break, limit]),
     practiceStamps: (fromTs: string) => db.query<{ ts: string; tz_offset_min: number }>(`SELECT ts, tz_offset_min FROM log_entries WHERE module = 'snooker' AND type IN (?, ?) AND ts >= ?`, [LOG.attempt, LOG.break, fromTs]),

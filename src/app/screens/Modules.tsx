@@ -1,3 +1,4 @@
+import { History } from 'lucide-react'
 import { Link } from 'react-router'
 import { getModules, modulePath } from '@/core/modules/registry'
 import { EmptyState, Screen } from '@/core/ui/primitives'
@@ -17,6 +18,12 @@ export function ModulesScreen() {
             <span className="label">{m.name}</span>
           </Link>
         ))}
+        <Link to="/history" className="tile">
+          <span className="tile-icon">
+            <History size={30} aria-hidden />
+          </span>
+          <span className="label">History</span>
+        </Link>
       </div>
     </Screen>
   )

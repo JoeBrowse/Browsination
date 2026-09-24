@@ -101,10 +101,12 @@ export function lifeRepo(db: SqlDriver) {
       ids.length ? db.query<BuyDetailsRow>(`SELECT * FROM buy_details WHERE item_id IN (${ids.map(() => '?').join(',')})`, ids) : Promise.resolve([] as BuyDetailsRow[]),
 
     // people
-    async contacted(personId: string): Promise<void> {
-      const t = nowIso()
-      await people.update(personId, { last_contacted_at: t })
-      await logs.add({ type: 'contact', module: 'life', value: 1, entity_type: 'people.person', entity_id: personId, ts: t })
+    /** Records a contact; pass `ts` for one that happened earlier. */
+    async contacted(personId: string, ts?: string): Promise<void> {
+      const t = ts ?? nowIso()
+      const person = await people.get(personId)
+      if (!person?.last_contacted_at || person.last_contacted_at < t) await people.update(personId, { last_contacted_at: t })
+      await logs.add({ type: 'contact', module: 'life', value: 1, entity_type: 'people.person', entity_id: personId, ts: t, payload: person ? { name: person.name } : {} })
     },
 
     // date nights

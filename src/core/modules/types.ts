@@ -2,6 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import type { ComponentType } from 'react'
 import type { RouteObject } from 'react-router'
 import type { SqlDriver } from '../db/driver'
+import type { LogTypeDef } from '../logs/types'
 import type { LocalDay } from '../time/localDay'
 
 /** Stable module keys. Stored in items.module and log_entries.module, so never renamed. */
@@ -62,6 +63,8 @@ export interface ModuleDef {
   week?: (ctx: WeekContext) => Promise<WeekItem[]>
   /** One line per habit-like thing for the weekly review's consistency glance ("Practice", "5 of 7"). */
   consistency?: (ctx: TodayContext) => Promise<ConsistencyLine[]>
+  /** The log types this module writes, so anything logged can be edited or backdated from History. */
+  logTypes?: LogTypeDef[]
 }
 
 export interface WeekContext extends TodayContext {

@@ -2,6 +2,8 @@ import { createElement } from 'react'
 import type { RouteObject } from 'react-router'
 import { MODULES } from '@/modules'
 import { ModuleLayout } from './ModuleLayout'
+import { CORE_LOG_TYPES } from '../logs/core'
+import type { LogTypeDef } from '../logs/types'
 import type { ModuleDef, ModuleId } from './types'
 
 /** The single sanctioned core -> modules import. Everything else reaches modules through here. */
@@ -21,6 +23,15 @@ export function moduleRoutes(list: ModuleDef[] = MODULES): RouteObject[] {
 
 export function modulePath(id: ModuleId, sub = ''): string {
   return `/m/${id}${sub ? `/${sub}` : ''}`
+}
+
+/** Every log type the app writes: core's own first, then each module's in tray order. */
+export function moduleLogTypes(list: ModuleDef[] = MODULES): LogTypeDef[] {
+  return [...CORE_LOG_TYPES, ...getModules(list).flatMap((m) => m.logTypes ?? [])]
+}
+
+export function findLogType(type: string, list: ModuleDef[] = MODULES): LogTypeDef | undefined {
+  return moduleLogTypes(list).find((d) => d.type === type)
 }
 
 function validate(list: ModuleDef[]): void {

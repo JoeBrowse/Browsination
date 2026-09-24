@@ -1,18 +1,20 @@
-import { Check } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import { toast } from '@/app/shellStore'
 import { consistencyLabel } from '@/core/consistency/consistency'
+import { addDays, formatDay, type LocalDay } from '@/core/time/localDay'
 import { Button, SectionTitle } from '@/core/ui/primitives'
 import { SleepSheet } from './SleepSheet'
 import { TimerSheet } from './TimerSheet'
-import { LOG } from './repo'
+import { LOG, stampFor } from './repo'
 import { useBrainRepo, useCheckIn, type CheckInData } from './useBrain'
 
 /** Daily check-in on Today: mood, sleep, meditation, stretch, habits. Every log is one tap. */
 export function CheckInPanel() {
   const repo = useBrainRepo()
-  const q = useCheckIn()
+  const [day, setDay] = useState<LocalDay | undefined>(undefined)
+  const q = useCheckIn(day)
   const [sleepOpen, setSleepOpen] = useState(false)
   const [timerOpen, setTimerOpen] = useState(false)
   const [noteOpen, setNoteOpen] = useState(false)
@@ -26,14 +28,29 @@ export function CheckInPanel() {
     else await repo.upsertDaily(LOG.stretch, d.today, d.dayStartHour, { value: 1 })
   }
   const meditationDone = async (minutes: number) => {
-    await repo.logs.add({ type: LOG.meditation, module: 'brain', value: minutes, unit: 'min' })
+    await repo.logs.add({ type: LOG.meditation, module: 'brain', value: minutes, unit: 'min', ...stampFor(d.today, d.dayStartHour) })
     toast(`Meditation ${minutes} min`)
   }
   const medMinutes = d.meditation.reduce((n, e) => n + (e.value ?? 0), 0)
 
   return (
     <div className="card stack" style={{ gap: 10 }}>
-      <SectionTitle>Check-in</SectionTitle>
+      <SectionTitle>
+        Check-in
+        <button aria-label="Day before" style={{ marginLeft: 'auto' }} onClick={() => setDay(addDays(d.today, -1))}>
+          <ChevronLeft size={20} aria-hidden />
+        </button>
+        {d.isToday ? (
+          <span className="sub muted">Today</span>
+        ) : (
+          <button className="pill accent" onClick={() => setDay(undefined)}>
+            {formatDay(d.today)}
+          </button>
+        )}
+        <button aria-label="Day after" disabled={d.isToday} onClick={() => setDay(addDays(d.today, 1))}>
+          <ChevronRight size={20} aria-hidden />
+        </button>
+      </SectionTitle>
       <Row label="Mood">
         <div className="chips">
           {[1, 2, 3, 4, 5].map((v) => (

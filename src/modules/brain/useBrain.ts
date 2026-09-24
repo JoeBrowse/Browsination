@@ -16,14 +16,18 @@ export interface HabitWithStats {
   week: Consistency
 }
 
-/** Today's logical day, the check-in entries and every habit with its 7-day consistency. */
-export function useCheckIn() {
+/**
+ * The check-in entries for a day (today unless one is given) and every habit with its 7-day
+ * consistency, so an earlier day can be filled in from the same panel.
+ */
+export function useCheckIn(day?: LocalDay) {
   const s = useServices()
   const repo = useBrainRepo()
   return useQuery(
     async () => {
       const dayStartHour = await s.settings.get('dayStartHour')
-      const today: LocalDay = todayLocal(new Date(), dayStartHour)
+      const realToday: LocalDay = todayLocal(new Date(), dayStartHour)
+      const today: LocalDay = day ?? realToday
       const [mood, sleep, meditation, stretch, habits, ticks] = await Promise.all([
         repo.entriesOn(LOG.mood, today, dayStartHour),
         repo.entriesOn(LOG.sleep, today, dayStartHour),
@@ -43,9 +47,10 @@ export function useCheckIn() {
       const yesterdayDrinks = await repo.entriesOn('drink', addDays(today, -1), dayStartHour)
       const morningAfter = (await repo.entriesOn('morning_after', today, dayStartHour))[0] ?? null
       const unitsYesterday = yesterdayDrinks.reduce((n, e) => n + Number(e.payload.units ?? 0), 0)
-      return { today, dayStartHour, mood: mood[0] ?? null, sleep: sleep[0] ?? null, meditation, stretch: stretch[0] ?? null, habits: stats, lastMeditationMinutes: lastMeditation?.value ?? 10, drankYesterday: yesterdayDrinks.length > 0, unitsYesterday, morningAfter }
+      return { today, isToday: today === realToday, dayStartHour, mood: mood[0] ?? null, sleep: sleep[0] ?? null, meditation, stretch: stretch[0] ?? null, habits: stats, lastMeditationMinutes: lastMeditation?.value ?? 10, drankYesterday: yesterdayDrinks.length > 0, unitsYesterday, morningAfter }
     },
     ['log_entries', 'habits', 'settings'],
+    [day],
   )
 }
 

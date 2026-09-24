@@ -1,6 +1,7 @@
 import { createHashRouter, Navigate, type RouteObject } from 'react-router'
 import { moduleRoutes } from '@/core/modules/registry'
 import { AppShell } from './AppShell'
+import { HistoryScreen } from './screens/History'
 import { InboxScreen } from './screens/Inbox'
 import { InsightsScreen } from './screens/Insights'
 import { ModulesScreen } from './screens/Modules'
@@ -18,6 +19,7 @@ export function appRoutes(): RouteObject[] {
         { path: 'inbox', element: <InboxScreen /> },
         { path: 'modules', element: <ModulesScreen /> },
         { path: 'insights', element: <InsightsScreen /> },
+        { path: 'history', element: <HistoryScreen /> },
         { path: 'settings', element: <SettingsScreen /> },
         { path: 'review', element: <ReviewScreen /> },
         ...moduleRoutes(),

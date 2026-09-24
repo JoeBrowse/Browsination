@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { formatDay } from '@/core/time/localDay'
+import { LogSheet } from '@/app/logs/LogSheet'
+import type { LogEntry } from '@/core/repos/logEntries'
+import { formatDay, localDayOf, localTimeOf } from '@/core/time/localDay'
 import { Button, EmptyState, Screen, SectionTitle, Toggle } from '@/core/ui/primitives'
 import { useQuery } from '@/core/ui/useQuery'
 import { useAlcoholRepo } from '../useAlcohol'
@@ -10,6 +12,7 @@ export function MedicationScreen() {
   const [name, setName] = useState('')
   const [dose, setDose] = useState('')
   const [times, setTimes] = useState('08:00')
+  const [editing, setEditing] = useState<LogEntry | null>(null)
   const meds = useQuery(() => repo.medications(false), ['medications'])
   const recent = useQuery(() => repo.medicationLogsBetween(new Date(Date.now() - 7 * 86_400_000).toISOString(), new Date(Date.now() + 60_000).toISOString()), ['log_entries'])
   const add = async () => {
@@ -64,19 +67,17 @@ export function MedicationScreen() {
       <SectionTitle>Last 7 days</SectionTitle>
       <div className="list">
         {[...(recent.data ?? [])].reverse().map((e) => (
-          <div key={e.id} className="list-row" style={{ minHeight: 40 }}>
+          <button key={e.id} className="list-row" style={{ minHeight: 40 }} onClick={() => setEditing(e)}>
             <span className="muted small" style={{ width: 120 }}>
-              {formatDay(e.ts.slice(0, 10))} {new Date(e.ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+              {formatDay(localDayOf(e.ts, e.tz_offset_min))} {localTimeOf(e.ts, e.tz_offset_min)}
             </span>
             <span className="grow">
               {String(e.payload.name ?? '')} <span className="muted small">{String(e.payload.dose ?? '')}</span>
             </span>
-            <Button ariaLabel="Remove log" onClick={() => void repo.logs.remove(e.id)}>
-              ×
-            </Button>
-          </div>
+          </button>
         ))}
       </div>
+      {editing ? <LogSheet key={editing.id} entry={editing} open onClose={() => setEditing(null)} /> : null}
     </Screen>
   )
 }

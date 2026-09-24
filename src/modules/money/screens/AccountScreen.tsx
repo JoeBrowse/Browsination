@@ -71,10 +71,19 @@ export function AccountScreen() {
       <div className="list">
         {[...snaps].reverse().map((s) => (
           <div key={s.id} className="list-row" style={{ minHeight: 40 }}>
-            <span className="muted small" style={{ width: 110 }}>
-              {formatDay(s.day)}
-            </span>
-            <span className="grow">{money(s.balance_pence)}</span>
+            <button
+              className="grow row"
+              style={{ textAlign: 'left' }}
+              onClick={() => {
+                setDay(s.day)
+                setAmount(s.balance_pence)
+              }}
+            >
+              <span className="muted small" style={{ width: 110 }}>
+                {formatDay(s.day)}
+              </span>
+              <span className="grow">{money(s.balance_pence)}</span>
+            </button>
             <Button ariaLabel="Remove balance" onClick={() => void repo.removeSnapshot(s.id)}>
               ×
             </Button>

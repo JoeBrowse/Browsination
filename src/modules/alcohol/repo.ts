@@ -30,6 +30,11 @@ export function alcoholRepo(db: SqlDriver) {
       const m = drinkMeasures(spec)
       return logs.add({ type: LOG.drink, module: 'alcohol', value: m.grams, unit: 'g', ts, payload: { units: m.units, volume_ml: spec.volumeMl, abv: spec.abv, preset: spec.preset, name: spec.name || describeDrink(spec) } })
     },
+    /** Change a drink already logged: grams and units follow the measure, so they never drift apart. */
+    updateDrink(id: string, spec: DrinkSpec, stamp?: { ts: string; tz_offset_min: number }): Promise<boolean> {
+      const m = drinkMeasures(spec)
+      return logs.update(id, { value: m.grams, unit: 'g', ...(stamp ?? {}), payload: { units: m.units, volume_ml: spec.volumeMl, abv: spec.abv, preset: spec.preset, name: spec.name || describeDrink(spec) } })
+    },
     lastDrink: () => logs.lastOfType(LOG.drink),
     /** Drinks since an instant, as model input. */
     async drinksSince(fromTs: string): Promise<Drink[]> {
@@ -42,6 +47,7 @@ export function alcoholRepo(db: SqlDriver) {
     logCaffeine(mg: number, preset: string, name: string, ts?: string): Promise<LogEntry> {
       return logs.add({ type: LOG.caffeine, module: 'alcohol', value: mg, unit: 'mg', ts, payload: { preset, name } })
     },
+    updateCaffeine: (id: string, mg: number, preset: string, name: string, stamp?: { ts: string; tz_offset_min: number }) => logs.update(id, { value: mg, unit: 'mg', ...(stamp ?? {}), payload: { preset, name } }),
     lastCaffeine: () => logs.lastOfType(LOG.caffeine),
     async dosesSince(fromTs: string): Promise<Dose[]> {
       const rows = await db.query<{ ts: string; value: number }>(`SELECT ts, value FROM log_entries WHERE type = ? AND ts >= ? AND value IS NOT NULL ORDER BY ts`, [LOG.caffeine, fromTs])

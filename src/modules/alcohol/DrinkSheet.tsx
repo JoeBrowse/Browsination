@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
+import { stampOf, WhenField, whenNow, whenOf, type When } from '@/app/logs/WhenField'
 import { toast } from '@/app/shellStore'
+import type { LogEntry } from '@/core/repos/logEntries'
+import { calendarDay } from '@/core/time/localDay'
 import { Button } from '@/core/ui/primitives'
 import { Sheet } from '@/core/ui/Sheet'
 import { useQuery } from '@/core/ui/useQuery'
@@ -8,49 +11,46 @@ import { DISCLAIMER, forecast } from './forecast'
 import { DRINK_PRESETS, describeDrink, drinkMeasures, type DrinkSpec } from './presets'
 import { fmtTime, useAlcoholRepo, useAlcoholSettings, weekAgoIso } from './useAlcohol'
 
-const pad = (n: number) => String(n).padStart(2, '0')
-const nowLocal = () => {
-  const d = new Date()
-  return `${pad(d.getHours())}:${pad(d.getMinutes())}`
-}
+const DEFAULT: DrinkSpec = { preset: 'pint', name: 'Pint', volumeMl: 568, abv: 4.5 }
 
-/** Pick a drink, see the forecast with and without it, then confirm. */
-export function DrinkSheet({ open, onClose, initial }: { open: boolean; onClose: () => void; initial?: DrinkSpec | null }) {
+/** The measure a logged drink was: what the payload recorded, whatever the presets say now. */
+const specOf = (e: LogEntry): DrinkSpec => ({ preset: String(e.payload.preset ?? 'custom'), name: String(e.payload.name ?? ''), volumeMl: Number(e.payload.volume_ml ?? 0), abv: Number(e.payload.abv ?? 0) })
+
+/** Pick a drink, see the forecast with and without it, then confirm. Also edits one already logged. */
+export function DrinkSheet({ open, onClose, initial, entry }: { open: boolean; onClose: () => void; initial?: DrinkSpec | null; entry?: LogEntry | null }) {
   const repo = useAlcoholRepo()
   const settings = useAlcoholSettings()
-  const [spec, setSpec] = useState<DrinkSpec>(initial ?? { preset: 'pint', name: 'Pint', volumeMl: 568, abv: 4.5 })
-  const [time, setTime] = useState(nowLocal())
+  const [spec, setSpec] = useState<DrinkSpec>(entry ? specOf(entry) : (initial ?? DEFAULT))
+  const [when, setWhen] = useState<When>(entry ? whenOf(entry) : whenNow())
   useEffect(() => {
     if (open) {
-      setSpec(initial ?? { preset: 'pint', name: 'Pint', volumeMl: 568, abv: 4.5 })
-      setTime(nowLocal())
+      setSpec(entry ? specOf(entry) : (initial ?? DEFAULT))
+      setWhen(entry ? whenOf(entry) : whenNow())
     }
-  }, [open, initial])
+  }, [open, initial, entry])
   const state = useQuery(async () => {
     const now = new Date()
     return { existing: await repo.drinksSince(new Date(now.getTime() - 24 * 3_600_000).toISOString()), weekGrams: await repo.gramsBetween(weekAgoIso(now), now.toISOString()) }
   }, ['log_entries'])
 
-  const atMs = useMemo(() => {
-    const d = new Date()
-    const [h, m] = time.split(':').map(Number) as [number, number]
-    d.setHours(h, m, 0, 0)
-    if (d.getTime() > Date.now() + 60_000) d.setDate(d.getDate() - 1)
-    return d.getTime()
-  }, [time])
+  const atMs = useMemo(() => Date.parse(stampOf(when).ts), [when])
+  // the forecast is about tonight, so it is only shown for a drink being logged now
+  const showForecast = when.day === calendarDay() && !entry
   const m = drinkMeasures(spec)
   const f = useMemo(() => {
-    if (!settings.data || !state.data) return null
+    if (!settings.data || !state.data || !showForecast) return null
     const nowMs = Date.now()
     return forecast({ existing: state.data.existing, candidate: { atMs, grams: m.grams }, person: settings.data.person, params: settings.data.params, nowMs, usualBedtime: settings.data.usualBedtime, usualSleepHours: settings.data.usualSleepHours, weekGramsSoFar: state.data.weekGrams })
-  }, [settings.data, state.data, atMs, m.grams])
+  }, [settings.data, state.data, atMs, m.grams, showForecast])
 
   const pick = (key: string) => {
     const p = DRINK_PRESETS.find((x) => x.key === key)!
     setSpec({ preset: p.key, name: p.label, volumeMl: p.volumeMl, abv: p.abv })
   }
   const confirm = async () => {
-    await repo.logDrink(spec, new Date(atMs).toISOString())
+    const stamp = stampOf(when)
+    if (entry) await repo.updateDrink(entry.id, spec, stamp)
+    else await repo.logDrink(spec, stamp.ts)
     toast(`${describeDrink(spec)} · ${m.units} units`)
     onClose()
   }
@@ -74,11 +74,8 @@ export function DrinkSheet({ open, onClose, initial }: { open: boolean; onClose:
             ABV %
             <input type="number" inputMode="decimal" step="0.1" aria-label="ABV" value={spec.abv} onChange={(e) => setSpec({ ...spec, abv: Number(e.target.value) || 0 })} />
           </label>
-          <label className="grow small muted">
-            at
-            <input type="time" aria-label="Drink time" value={time} onChange={(e) => setTime(e.target.value)} />
-          </label>
         </div>
+        <WhenField value={when} onChange={setWhen} />
         <div className="kv">
           <span>{m.units} units · {m.grams} g</span>
           {f ? <span className="pill">{f.session.units.toFixed(1)} units tonight</span> : null}
@@ -113,8 +110,19 @@ export function DrinkSheet({ open, onClose, initial }: { open: boolean; onClose:
         <div className="btn-row">
           <Button onClick={onClose}>Cancel</Button>
           <Button variant="primary" onClick={() => void confirm()} disabled={m.grams <= 0}>
-            Log it
+            {entry ? 'Save' : 'Log it'}
           </Button>
+          {entry ? (
+            <Button
+              variant="danger"
+              onClick={() => {
+                void repo.logs.remove(entry.id)
+                onClose()
+              }}
+            >
+              Delete
+            </Button>
+          ) : null}
         </div>
       </div>
     </Sheet>

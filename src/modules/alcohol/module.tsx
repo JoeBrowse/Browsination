@@ -6,8 +6,10 @@ import { AlcoholScreen } from './screens/AlcoholScreen'
 import { MedicationScreen } from './screens/MedicationScreen'
 import { medicationReminders } from './today'
 import { alcoholConsistency } from './week'
+import { alcoholLogTypes } from './logTypes'
 
 export const alcoholModule: ModuleDef = {
+  logTypes: alcoholLogTypes,
   id: 'alcohol',
   name: 'Drinks',
   icon: Wine,

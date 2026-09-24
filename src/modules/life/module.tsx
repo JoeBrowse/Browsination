@@ -11,8 +11,10 @@ import { TripScreen } from './screens/TripScreen'
 import { TripsScreen } from './screens/TripsScreen'
 import { lifeDigest, lifeToday } from './today'
 import { lifeWeek } from './week'
+import { lifeLogTypes } from './logTypes'
 
 export const lifeModule: ModuleDef = {
+  logTypes: lifeLogTypes,
   id: 'life',
   name: 'Life',
   icon: Home,
